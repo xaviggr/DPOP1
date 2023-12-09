@@ -17,4 +17,8 @@ public class ShopProduct extends Product {
     public double getProductPrice() {
         return price;
     }
+
+    public void setProductPrice(double price) {
+        this.price = price;
+    }
 }
