@@ -8,13 +8,16 @@ public class Shop {
 
     private String businessModel;
 
+    private double earnings;
+
     private Catalog catalog;
 
-    public Shop(String name, String description, int foundationYear, String businessModel) {
+    public Shop(String name, String description, int foundationYear, double earnings, String businessModel, Catalog catalog) {
         this.name = name;
         this.description = description;
         this.foundationYear = foundationYear;
         this.businessModel = businessModel;
-        this.catalog = new Catalog(null);
+        this.earnings = earnings;
+        this.catalog = catalog;
     }
 }

@@ -1,16 +1,18 @@
 package Persistence;
 
+import Bussines.Catalog;
 import Bussines.Product.Product;
+import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
+import Bussines.Review;
 import Bussines.Shop;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
+import com.google.gson.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,10 +33,29 @@ public class ShopDAO extends DAOJSON {
     public Shop getShop(String shopName) {
         JsonArray shops = readAllFromFile();
 
-        for (int i = 0; i < shops.size(); i++) {
-            if (Objects.equals(shops.get(i).getAsJsonObject().get("name").getAsString(), shopName)) {
-                Gson gson = new Gson();
-                return gson.fromJson(shops.get(i), Shop.class);
+        for (JsonElement shopElement : shops) {
+            JsonObject shopObject = shopElement.getAsJsonObject();
+            if (shopObject.get("name").getAsString().equals(shopName)) {
+                String name = shopObject.get("name").getAsString();
+                String description = shopObject.get("description").getAsString();
+                int foundationYear = shopObject.get("since").getAsInt();
+                double earnings = shopObject.get("earnings").getAsDouble();
+                String businessModel = shopObject.get("businessModel").getAsString();
+
+                JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
+                List<ShopProduct> products = new ArrayList<>();
+
+                for (JsonElement shopProductElement : shopProducts) {
+                    JsonObject shopProductObject = shopProductElement.getAsJsonObject();
+                    String product_name = shopProductObject.get("name").toString();
+                    String brand = shopProductObject.get("brand").getAsString();
+                    String category = shopProductObject.get("category").getAsString();
+                    double mrp = shopProductObject.get("mrp").getAsDouble();
+                    double price = shopProductObject.get("price").getAsDouble();
+                    products.add(new ShopProduct(product_name, brand, mrp, ProductCategory.valueOf(category), price));
+                }
+
+                return new Shop(name, description, foundationYear, earnings, businessModel, new Catalog(products));
             }
         }
 
