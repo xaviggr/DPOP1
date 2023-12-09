@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class ShopDAO extends DAOJSON {
     public ShopDAO() {
         this.path = "shops.json";
@@ -98,16 +99,64 @@ public class ShopDAO extends DAOJSON {
     }
 
     public boolean addProductInShop(String shopName, ShopProduct shopProduct) {
+        JsonArray shops = readAllFromFile();
+
+        for (JsonElement shopElement : shops) {
+            JsonObject shopObject = shopElement.getAsJsonObject();
+            if (shopObject.get("name").getAsString().equals(shopName)) {
+                JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
+                JsonObject shopProductObject = new JsonObject();
+                shopProductObject.addProperty("name", shopProduct.getProductName());
+                shopProductObject.addProperty("brand", shopProduct.getBrand());
+                shopProductObject.addProperty("category", shopProduct.getCategory().toString());
+                shopProductObject.addProperty("mrp", shopProduct.getMaxPrice());
+                shopProductObject.addProperty("price", shopProduct.getProductPrice());
+                shopProducts.add(shopProductObject);
+                return saveToFile(shops);
+            }
+        }
 
         return false;
     }
 
     public boolean updateProductFromShop(String shopName, ShopProduct shopProduct) {
+        JsonArray shops = readAllFromFile();
+        for (JsonElement shopElement : shops) {
+            JsonObject shopObject = shopElement.getAsJsonObject();
+            if (shopObject.get("name").getAsString().equals(shopName)) {
+                JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
+                for (JsonElement shopProductElement : shopProducts) {
+                    JsonObject shopProductObject = shopProductElement.getAsJsonObject();
+                    if (shopProductObject.get("name").getAsString().equals(shopProduct.getProductName())) {
+                        shopProductObject.addProperty("brand", shopProduct.getBrand());
+                        shopProductObject.addProperty("category", shopProduct.getCategory().toString());
+                        shopProductObject.addProperty("mrp", shopProduct.getMaxPrice());
+                        shopProductObject.addProperty("price", shopProduct.getProductPrice());
+                        return saveToFile(shops);
+                    }
+                }
+            }
+        }
 
         return false;
     }
 
-    public boolean removeProductFromShop(String shopName, ShopProduct shopProduct) {
+    public boolean removeProductFromShop(String shopName, String shopProductName) {
+        JsonArray shops = readAllFromFile();
+            for (JsonElement shopElement : shops) {
+            JsonObject shopObject = shopElement.getAsJsonObject();
+            if (shopObject.get("name").getAsString().equals(shopName)) {
+                JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
+                for (JsonElement shopProductElement : shopProducts) {
+                    JsonObject shopProductObject = shopProductElement.getAsJsonObject();
+                    if (shopProductObject.get("name").getAsString().equals(shopProductName)) {
+                        shopProducts.remove(shopProductObject);
+                        return saveToFile(shops);
+                    }
+                }
+            }
+        }
+
         return false;
     }
 }

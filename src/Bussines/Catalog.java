@@ -2,9 +2,9 @@ package Bussines;
 
 import Bussines.Product.ShopProduct;
 
-import java.util.Collection;
 import java.util.List;
 
+@SuppressWarnings("FieldMayBeFinal")
 public class Catalog {
     private List<ShopProduct> shopProducts;
 

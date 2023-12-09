@@ -7,7 +7,6 @@ import java.net.URL;
 
 public abstract class DAOJSON {
     protected String path;
-    protected FileReader fileReader;
     protected URL resource;
 
     //Nuevo
@@ -15,11 +14,11 @@ public abstract class DAOJSON {
         resource = ClassLoader.getSystemClassLoader().getResource(path);
 
         if (resource == null) {
-            throw new FileNotFoundException("El archivo " + path + " no existe.");
+            throw new FileNotFoundException("File " + path + " not exists.");
         }
         File file = new File(resource.getPath());
         if (!file.exists()) {
-            throw new FileNotFoundException("El archivo " + path + " no existe.");
+            throw new FileNotFoundException("File " + path + " not exists.");
         }
     }
 
@@ -53,7 +52,6 @@ public abstract class DAOJSON {
             fileWriter.write(gson.toJson(products));
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
     }
