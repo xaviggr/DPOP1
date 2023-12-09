@@ -4,32 +4,60 @@ import Bussines.Product.ProductCategory;
 import Bussines.Review;
 import com.google.gson.*;
 
+import java.util.List;
+
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ProductDAO extends DAOJSON {
 
     public ProductDAO() {
         this.path = "products.json";
     }
 
-    public boolean addProduct(Product product) {
-        JsonArray products = readAllFromFile();
+    private JsonObject productToJson(Product product) {
+        JsonObject productJson = new JsonObject();
+        productJson.addProperty("name", product.getProductName());
+        productJson.addProperty("brand", product.getBrand());
+        productJson.addProperty("mrp", product.getMaxPrice());
+        productJson.addProperty("category", product.getCategory().toString());
+        productJson.add("reviews", reviewsToJsonArray(product.getReviews()));
+        return productJson;
+    }
 
-        JsonObject newProduct = new JsonObject();
-        newProduct.addProperty("name", product.getProductName());
-        newProduct.addProperty("brand", product.getBrand());
-        newProduct.addProperty("mrp", product.getMaxPrice());
-        newProduct.addProperty("category", product.getCategory().toString());
-
+    private JsonArray reviewsToJsonArray(List<Review> reviews) {
         JsonArray reviewsArray = new JsonArray();
-        for (Review review : product.getReviews()) {
+        for (Review review : reviews) {
             JsonObject reviewObject = new JsonObject();
             reviewObject.addProperty("stars", review.getStars());
             reviewObject.addProperty("commentary", review.getCommentary());
             reviewsArray.add(reviewObject);
         }
-        newProduct.add("reviews", reviewsArray);
+        return reviewsArray;
+    }
 
+    private Product jsonToProduct(JsonObject productObject) {
+        String name = productObject.get("name").getAsString();
+        String brand = productObject.get("brand").getAsString();
+        Double mrp = productObject.get("mrp").getAsDouble();
+        String category = productObject.get("category").getAsString();
+
+        Product product = new Product(name, brand, mrp, ProductCategory.valueOf(category));
+
+        JsonArray reviewsArray = productObject.get("reviews").getAsJsonArray();
+        for (JsonElement reviewElement : reviewsArray) {
+            JsonObject reviewObject = reviewElement.getAsJsonObject();
+            String stars = reviewObject.get("stars").toString();
+            String commentary = reviewObject.get("commentary").getAsString();
+            Review review = new Review(stars, commentary);
+            product.addReview(review);
+        }
+
+        return product;
+    }
+
+    public boolean addProduct(Product product) {
+        JsonArray products = readAllFromFile();
+        JsonObject newProduct = productToJson(product);
         products.add(newProduct);
-
         return saveToFile(products);
     }
 
@@ -39,7 +67,6 @@ public class ProductDAO extends DAOJSON {
         for (JsonElement productElement : products) {
             JsonObject productObject = productElement.getAsJsonObject();
             if (productObject.get("name").getAsString().equals(productName)) {
-                System.out.println(productElement);
                 products.remove(productElement);
                 return saveToFile(products);
             }
@@ -54,28 +81,9 @@ public class ProductDAO extends DAOJSON {
         for (JsonElement productElement : products) {
             JsonObject productObject = productElement.getAsJsonObject();
             if (productObject.get("name").getAsString().equals(productName)) {
-                String name = productObject.get("name").getAsString();
-                String brand = productObject.get("brand").getAsString();
-                Double mrp = productObject.get("mrp").getAsDouble();
-                String category = productObject.get("category").getAsString();
-
-                Product product = new Product(name, brand, mrp, ProductCategory.valueOf(category));
-
-                JsonArray reviewsArray = productObject.get("reviews").getAsJsonArray();
-                for (JsonElement reviewElement : reviewsArray) {
-                    JsonObject reviewObject = reviewElement.getAsJsonObject();
-                    String stars = reviewObject.get("stars").toString();
-                    String commentary = reviewObject.get("commentary").getAsString();
-                    Review review = new Review(stars, commentary);
-                    product.addReview(review);
-                }
-
-                return product;
+                return jsonToProduct(productObject);
             }
         }
-
         return null;
     }
-
-
 }
