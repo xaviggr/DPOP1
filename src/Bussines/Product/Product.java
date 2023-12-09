@@ -30,12 +30,22 @@ public class Product {
         return maxPrice;
     }
 
+    public void setMaxPrice(double maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
     public String getBrand() {
         return brand;
+    }
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public ProductCategory getCategory() {
         return category;
+    }
+    public void setCategory(ProductCategory category) {
+        this.category = category;
     }
 
     public List<Review> getReviews() {

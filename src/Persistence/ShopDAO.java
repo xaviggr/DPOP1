@@ -29,13 +29,7 @@ public class ShopDAO extends DAOJSON {
 
     public Shop getShop(String shopName) {
         List<Shop> shopsList = getShops();
-
-        for (Shop currentShop: shopsList) {
-            if (currentShop.getName().equals(shopName)) {
-                return currentShop;
-            }
-        }
-        return null;
+        return findShopByName(shopsList, shopName);
     }
 
     public List<Shop> getShops() {
@@ -44,26 +38,7 @@ public class ShopDAO extends DAOJSON {
 
         for (JsonElement shopElement : shops) {
             JsonObject shopObject = shopElement.getAsJsonObject();
-            String name = shopObject.get("name").getAsString();
-            String description = shopObject.get("description").getAsString();
-            int foundationYear = shopObject.get("since").getAsInt();
-            double earnings = shopObject.get("earnings").getAsDouble();
-            String businessModel = shopObject.get("businessModel").getAsString();
-
-            JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
-            List<ShopProduct> products = new ArrayList<>();
-
-            for (JsonElement shopProductElement : shopProducts) {
-                JsonObject shopProductObject = shopProductElement.getAsJsonObject();
-                String product_name = shopProductObject.get("name").toString();
-                String brand = shopProductObject.get("brand").getAsString();
-                String category = shopProductObject.get("category").getAsString();
-                double mrp = shopProductObject.get("mrp").getAsDouble();
-                double price = shopProductObject.get("price").getAsDouble();
-                products.add(new ShopProduct(product_name, brand, mrp, ProductCategory.valueOf(category), price));
-            }
-
-            shopsList.add(new Shop(name, description, foundationYear, earnings, businessModel, new Catalog(products)));
+            shopsList.add(createShopFromJsonObject(shopObject));
         }
 
         return shopsList;
@@ -94,47 +69,29 @@ public class ShopDAO extends DAOJSON {
                 return currentProduct;
             }
         }
-
         return null;
     }
 
     public boolean addProductInShop(String shopName, ShopProduct shopProduct) {
-        JsonArray shops = readAllFromFile();
+        List<Shop> shops = getShops();
+        Shop shop = findShopByName(shops, shopName);
 
-        for (JsonElement shopElement : shops) {
-            JsonObject shopObject = shopElement.getAsJsonObject();
-            if (shopObject.get("name").getAsString().equals(shopName)) {
-                JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
-                JsonObject shopProductObject = new JsonObject();
-                shopProductObject.addProperty("name", shopProduct.getProductName());
-                shopProductObject.addProperty("brand", shopProduct.getBrand());
-                shopProductObject.addProperty("category", shopProduct.getCategory().toString());
-                shopProductObject.addProperty("mrp", shopProduct.getMaxPrice());
-                shopProductObject.addProperty("price", shopProduct.getProductPrice());
-                shopProducts.add(shopProductObject);
-                return saveToFile(shops);
-            }
+        if (shop != null) {
+            shop.getCatalog().addProduct(shopProduct);
+            return saveShopsToFile(shops);
         }
 
         return false;
     }
 
     public boolean updateProductFromShop(String shopName, ShopProduct shopProduct) {
-        JsonArray shops = readAllFromFile();
-        for (JsonElement shopElement : shops) {
-            JsonObject shopObject = shopElement.getAsJsonObject();
-            if (shopObject.get("name").getAsString().equals(shopName)) {
-                JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
-                for (JsonElement shopProductElement : shopProducts) {
-                    JsonObject shopProductObject = shopProductElement.getAsJsonObject();
-                    if (shopProductObject.get("name").getAsString().equals(shopProduct.getProductName())) {
-                        shopProductObject.addProperty("brand", shopProduct.getBrand());
-                        shopProductObject.addProperty("category", shopProduct.getCategory().toString());
-                        shopProductObject.addProperty("mrp", shopProduct.getMaxPrice());
-                        shopProductObject.addProperty("price", shopProduct.getProductPrice());
-                        return saveToFile(shops);
-                    }
-                }
+        List<Shop> shops = getShops();
+        Shop shop = findShopByName(shops, shopName);
+
+        if (shop != null) {
+            Catalog catalog = shop.getCatalog();
+            if (catalog.updateProduct(shopProduct)) {
+                return saveShopsToFile(shops);
             }
         }
 
@@ -142,21 +99,76 @@ public class ShopDAO extends DAOJSON {
     }
 
     public boolean removeProductFromShop(String shopName, String shopProductName) {
-        JsonArray shops = readAllFromFile();
-            for (JsonElement shopElement : shops) {
-            JsonObject shopObject = shopElement.getAsJsonObject();
-            if (shopObject.get("name").getAsString().equals(shopName)) {
-                JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
-                for (JsonElement shopProductElement : shopProducts) {
-                    JsonObject shopProductObject = shopProductElement.getAsJsonObject();
-                    if (shopProductObject.get("name").getAsString().equals(shopProductName)) {
-                        shopProducts.remove(shopProductObject);
-                        return saveToFile(shops);
-                    }
-                }
+        List<Shop> shops = getShops();
+        Shop shop = findShopByName(shops, shopName);
+
+        if (shop != null) {
+            Catalog catalog = shop.getCatalog();
+            if (catalog.removeProduct(shopProductName)) {
+                return saveShopsToFile(shops);
             }
         }
 
         return false;
+    }
+
+    private Shop findShopByName(List<Shop> shops, String shopName) {
+        for (Shop currentShop : shops) {
+            if (currentShop.getName().equals(shopName)) {
+                return currentShop;
+            }
+        }
+        return null;
+    }
+
+    private Shop createShopFromJsonObject(JsonObject shopObject) {
+        String name = shopObject.get("name").getAsString();
+        String description = shopObject.get("description").getAsString();
+        int foundationYear = shopObject.get("since").getAsInt();
+        double earnings = shopObject.get("earnings").getAsDouble();
+        String businessModel = shopObject.get("businessModel").getAsString();
+
+        JsonArray shopProducts = shopObject.get("catalogue").getAsJsonArray();
+        List<ShopProduct> products = new ArrayList<>();
+
+        for (JsonElement shopProductElement : shopProducts) {
+            JsonObject shopProductObject = shopProductElement.getAsJsonObject();
+            String product_name = shopProductObject.get("name").getAsString();
+            String brand = shopProductObject.get("brand").getAsString();
+            String category = shopProductObject.get("category").getAsString();
+            double mrp = shopProductObject.get("mrp").getAsDouble();
+            double price = shopProductObject.get("price").getAsDouble();
+            products.add(new ShopProduct(product_name, brand, mrp, ProductCategory.valueOf(category), price));
+        }
+
+        return new Shop(name, description, foundationYear, earnings, businessModel, new Catalog(products));
+    }
+
+    private boolean saveShopsToFile(List<Shop> shops) {
+        JsonArray jsonArray = new JsonArray();
+
+        for (Shop shop : shops) {
+            JsonObject shopObject = new JsonObject();
+            shopObject.addProperty("name", shop.getName());
+            shopObject.addProperty("description", shop.getDescription());
+            shopObject.addProperty("since", shop.getFoundationYear());
+            shopObject.addProperty("earnings", shop.getEarnings());
+            shopObject.addProperty("businessModel", shop.getBusinessModel());
+
+            JsonArray shopProducts = new JsonArray();
+            for (ShopProduct shopProduct : shop.getCatalog().getProducts()) {
+                JsonObject productObject = new JsonObject();
+                productObject.addProperty("name", shopProduct.getProductName());
+                productObject.addProperty("brand", shopProduct.getBrand());
+                productObject.addProperty("category", shopProduct.getCategory().toString());
+                productObject.addProperty("mrp", shopProduct.getMaxPrice());
+                productObject.addProperty("price", shopProduct.getProductPrice());
+                shopProducts.add(productObject);
+            }
+
+            shopObject.add("catalogue", shopProducts);
+            jsonArray.add(shopObject);
+        }
+        return saveToFile(jsonArray);
     }
 }
