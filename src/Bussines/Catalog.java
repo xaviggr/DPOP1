@@ -2,6 +2,7 @@ package Bussines;
 
 import Bussines.Product.ShopProduct;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Catalog {
@@ -9,5 +10,9 @@ public class Catalog {
 
     public Catalog(List<ShopProduct> shopProducts) {
         this.shopProducts = shopProducts;
+    }
+
+    public List<ShopProduct> getProducts() {
+        return shopProducts;
     }
 }

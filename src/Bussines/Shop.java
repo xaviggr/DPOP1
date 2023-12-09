@@ -2,6 +2,30 @@ package Bussines;
 
 public class Shop {
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getFoundationYear() {
+        return foundationYear;
+    }
+
+    public String getBusinessModel() {
+        return businessModel;
+    }
+
+    public double getEarnings() {
+        return earnings;
+    }
+
+    public Catalog getCatalog() {
+        return catalog;
+    }
+
     private String name;
     private String description;
     private int foundationYear;
