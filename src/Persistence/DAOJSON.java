@@ -1,26 +1,60 @@
 package Persistence;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import com.google.gson.*;
+
+import java.io.*;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public abstract class DAOJSON {
     protected String path;
     protected FileReader fileReader;
+    protected URL resource;
 
-    public DAOJSON() {
-        this.path = null;
-    }
-
+    //Nuevo
     public void checkIfFileExists() throws FileNotFoundException {
-        URL resource = ClassLoader.getSystemClassLoader().getResource(path);
+        resource = ClassLoader.getSystemClassLoader().getResource(path);
 
         if (resource == null) {
-            throw new FileNotFoundException("El archivo no se encuentra: " + path);
+            throw new FileNotFoundException("El archivo " + path + " no existe.");
         }
+        File file = new File(resource.getPath());
+        if (!file.exists()) {
+            throw new FileNotFoundException("El archivo " + path + " no existe.");
+        }
+    }
 
-        fileReader = new FileReader(resource.getFile());
+    //Nuevo
+    public void createFile() throws IOException {
+        try (FileWriter fileWriter = new FileWriter("data/" + path)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            fileWriter.write(gson.toJson(new JsonArray()));
+        }
+    }
+
+    //Nuevo
+    protected JsonArray readAllFromFile() {
+        resource = ClassLoader.getSystemClassLoader().getResource(path);
+        assert resource != null;
+        try {
+            FileReader fr = new FileReader(resource.getFile());
+            JsonElement element = JsonParser.parseReader(fr);
+            if (element.isJsonNull())
+                return new JsonArray();
+            return element.getAsJsonArray();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Nuevo
+    protected boolean saveToFile(JsonArray products) {
+        try (FileWriter fileWriter = new FileWriter(resource.getFile())) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            fileWriter.write(gson.toJson(products));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

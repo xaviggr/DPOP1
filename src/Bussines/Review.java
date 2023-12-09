@@ -11,7 +11,7 @@ public class Review {
     }
 
     public int getStars(){
-        return 0;
+        return qualityStars.length();
     }
 
     public String getCommentary(){
