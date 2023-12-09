@@ -25,6 +25,12 @@ public class Product {
         return name;
     }
 
+    //New function
+    public String getProductBrand() {
+        return brand;
+    }
+
+
     public void addReview(Review review) {
         reviews.add(review);
     }
