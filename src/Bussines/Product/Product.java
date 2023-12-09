@@ -25,6 +25,13 @@ public class Product {
     public String getProductName() {
         return name;
     }
+  
+
+    //New function
+    public String getProductBrand() {
+        return brand;
+    }
+
 
     public double getMaxPrice() {
         return maxPrice;
@@ -51,6 +58,7 @@ public class Product {
     public List<Review> getReviews() {
         return reviews;
     }
+
     public void addReview(Review review) {
         reviews.add(review);
     }

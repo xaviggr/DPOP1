@@ -38,8 +38,8 @@ public class ShopManager {
 
     }
 
-    public void findProduct(String nameProduct) {
-        productDAO.findProduct(nameProduct);
+    public Product findProduct(String nameProduct) {
+        return  productDAO.findProduct(nameProduct);
     }
 
     public void readReviews(String nameProduct) {
