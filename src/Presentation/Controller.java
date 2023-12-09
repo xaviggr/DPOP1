@@ -213,7 +213,7 @@ public class Controller {
         int foundingYear = ui.askForInteger("Please enter the shop's founding year: ");
         String businessModel = giveShopModel();
 
-        Shop s = new Shop(shopName,description,foundingYear,businessModel);
+        Shop s = new Shop(shopName,description,foundingYear, 0,businessModel,null);
         shopManager.createShop(s);
         ui.showMessage("'" + shopName + "'"  + " is now a part of the elCofre family.\n");
     }

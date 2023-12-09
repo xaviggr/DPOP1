@@ -1,11 +1,8 @@
 import Bussines.ShopManager;
-import Persistence.DAOJSON;
 import Persistence.ProductDAO;
 import Persistence.ShopDAO;
 import Presentation.Controller;
 import Presentation.UI;
-
-import java.io.FileNotFoundException;
 
 public class Main {
     public static void main(String[] args) {

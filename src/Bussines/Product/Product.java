@@ -2,6 +2,7 @@ package Bussines.Product;
 
 import Bussines.Review;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Product {
@@ -10,7 +11,7 @@ public class Product {
     private String brand;
     private Double maxPrice;
 
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
     private ProductCategory category;
 
@@ -24,12 +25,39 @@ public class Product {
     public String getProductName() {
         return name;
     }
+  
 
     //New function
     public String getProductBrand() {
         return brand;
     }
 
+
+    public double getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(double maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public ProductCategory getCategory() {
+        return category;
+    }
+    public void setCategory(ProductCategory category) {
+        this.category = category;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
 
     public void addReview(Review review) {
         reviews.add(review);
@@ -38,4 +66,5 @@ public class Product {
     public void removeReview(Review review) {
         reviews.remove(review);
     }
+
 }
