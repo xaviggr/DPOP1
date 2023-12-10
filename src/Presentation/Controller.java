@@ -6,6 +6,8 @@ import Bussines.Shop;
 import Bussines.ShopManager;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
 
@@ -84,9 +86,11 @@ public class Controller {
     private void productsLoop(int choose) {
         switch (choose) {
             case 1:
+                ui.showMessage("");
                 createProduct();
                 break;
             case 2:
+                ui.showMessage("");
                 removeProduct();
                 break;
             case 3:
@@ -126,6 +130,7 @@ public class Controller {
         }
     }
 
+    //FULLY DONE
     private void createProduct() {
         String name = ui.askForString("Please enter the product’s name: ");
         String brand = ui.askForString("Please enter the product’s brand: ");
@@ -160,26 +165,29 @@ public class Controller {
         };
     }
 
-    //NEEDS WORK WHEN DAO IS DONE
+    //FULLY DONE
     private void removeProduct() {
-        String productName = ui.askForString("Enter the name of the product: ");
 
-        // list all products here
-        //ask user to choose product get name of that product and pass it to the functions.
-
-
-        Product p = shopManager.findProduct(productName);
-        int option = ui.askForConfirmation(p.getProductName(), p.getProductBrand());
-
-        if(option == 1) {
-            shopManager.removeProduct(productName);
-            ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " has been withdrawn from sale.\n");
+        List<Product> list = new ArrayList<>();
+        list = shopManager.getAllProducts();
+        int index = ui.showProductList(list);
+        if (index > list.size()) {
+            //back
+            return;
         }
+
         else {
-            ui.showMessage("Operation Canceled\n");
+            Product p = list.get(index - 1);
+            int option = ui.askForConfirmation(p.getProductName(), p.getProductBrand());
+
+            if(option == 1) {
+                shopManager.removeProduct(p.getProductName());
+                ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " has been withdrawn from sale.\n");
+            }
+            else {
+                ui.showMessage("Operation Canceled\n");
+            }
         }
-
-
     }
 
     // New function

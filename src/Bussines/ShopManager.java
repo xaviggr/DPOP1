@@ -7,6 +7,7 @@ import Persistence.ShopDAO;
 import Bussines.Product.Product;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class ShopManager {
 
@@ -20,10 +21,11 @@ public class ShopManager {
 
     public void createProduct(String name, String brand, double maxPrice, ProductCategory category) {
         Product product = new Product(name, brand, maxPrice, category);
+        productDAO.addProduct(product);
     }
 
     public void removeProduct(String nameProduct) {
-
+        productDAO.removeProduct(nameProduct);
     }
 
     public void createShop(Shop shop) {
@@ -64,5 +66,9 @@ public class ShopManager {
 
     public void checkIfFileExists() throws FileNotFoundException {
         productDAO.checkIfFileExists();
+    }
+
+    public List<Product> getAllProducts() {
+        return productDAO.getAllProducts();
     }
 }
