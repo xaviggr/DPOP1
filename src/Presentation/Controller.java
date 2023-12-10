@@ -13,20 +13,33 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-@SuppressWarnings("unused")
+/**
+ * Controlador que gestiona la interacción entre la interfaz de usuario (UI),
+ * el gestor de tiendas (ShopManager) y el carrito de compras (ShopCart).
+ */
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class Controller {
 
     private final UI ui;
     private final ShopManager shopManager;
 
     private final ShopCart shopCart;
-
+    /**
+     * Constructor de la clase Controller.
+     *
+     * @param ui           Interfaz de usuario.
+     * @param shopManager  Gestor de tiendas.
+     * @param shopCart     Carrito de compras.
+     */
     public Controller(UI ui, ShopManager shopManager, ShopCart shopCart) {
         this.ui = ui;
         this.shopManager = shopManager;
         this.shopCart = shopCart;
     }
 
+    /**
+     * Método principal que inicia la ejecución del programa.
+     */
     public void run() {
         ui.showMainLogo();
         try {
@@ -38,11 +51,18 @@ public class Controller {
         }
     }
 
+    /**
+     * Realiza la verificación necesaria antes de ejecutar el programa.
+     *
+     * @throws FileNotFoundException Si no se encuentran archivos necesarios.
+     */
     private void checkToRun() throws FileNotFoundException {
         shopManager.checkIfFileExists();
     }
 
-    // New function
+    /**
+     * Inicia el menú principal del programa.
+     */
     private void startMenu() {
         int option;
 
@@ -53,7 +73,11 @@ public class Controller {
             executeOption(option); // Execute the selected option
         } while(option != 6); // Continue until the exit option is selected
     }
-
+    /**
+     * Ejecuta la opción seleccionada por el usuario.
+     *
+     * @param option Opción seleccionada por el usuario.
+     */
     private void executeOption(int option) {
         ui.showMessage(""); // Display a blank message
         int choose;
@@ -92,6 +116,11 @@ public class Controller {
     }
 
     //MENUS INTERACTION
+    /**
+     * Realiza la interacción relacionada con las tiendas según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario.
+     */
     private void shopInteraction(int choose) {
 
         switch (choose) {
@@ -118,6 +147,13 @@ public class Controller {
                 break;
         }
     }
+
+    /**
+     * Realiza la interacción relacionada con la búsqueda de productos.
+     *
+     *      @param choose Opción seleccionada por el usuario.
+     *      @param p      Producto asociado a la interacción.
+     */
     private void searchProductInteraction(int choose, Product p) {
 
         switch (choose) {
@@ -137,6 +173,11 @@ public class Controller {
                 break;
         }
     }
+    /**
+     * Realiza la interacción relacionada con los productos según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario.
+     */
     private void productInteraction(int choose) {
         switch (choose) {
             case 1:
@@ -155,6 +196,12 @@ public class Controller {
                 break;
         }
     }
+    /**
+     * Realiza la interacción relacionada con la lista de tiendas según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario.
+     * @param p      Producto asociado a la interacción.
+     */
     private void listShopsInteraction(int choose, ShopProduct p) {
 
         switch (choose) {
@@ -178,6 +225,11 @@ public class Controller {
                 break;
         }
     }
+    /**
+     * Realiza la interacción relacionada con el carrito de compras según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario.
+     */
     private void shopCartInteraction(int choose) {
 
         switch (choose) {
@@ -198,8 +250,10 @@ public class Controller {
         }
     }
 
-
     //SHOPS
+    /**
+     * Realiza la interacción relacionada con la creación de una tienda.
+     */
     private void createShop() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String description = ui.askForString("Please enter the shop's description: ");
@@ -210,6 +264,9 @@ public class Controller {
         shopManager.createShop(s);
         ui.showMessage("'" + shopName + "'"  + " is now a part of the elCofre family.\n");
     }
+    /**
+     * Realiza la interacción relacionada con la expansión del catálogo de una tienda.
+     */
     private void expandCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String productName = ui.askForString("Please enter the product's name: ");
@@ -229,6 +286,9 @@ public class Controller {
         }
 
     }
+    /**
+     * Realiza la interacción relacionada con la reducción del catálogo de una tienda.
+     */
     private void reduceCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         ui.showMessage("This shop sells the following products:");
@@ -245,6 +305,9 @@ public class Controller {
 
         }
     }
+    /**
+     * Realiza la interacción relacionada con la lista de tiendas.
+     */
     private void listShops() {
         List<String> shopNames = shopManager.getAllNameShops();
 
@@ -264,6 +327,9 @@ public class Controller {
     }
 
     //PRODUCTS
+    /**
+     * Realiza la interacción relacionada con la creación de un producto.
+     */
     private void createProduct() {
         String name = ui.askForString("Please enter the product’s name: ");
         String brand = ui.askForString("Please enter the product’s brand: ");
@@ -272,6 +338,9 @@ public class Controller {
         shopManager.createProduct(name, brand, maxPrice, category);
         ui.showMessage("The product " + "\"" + name + "\"" + " by \"" + brand + "\" was added to the system.\n");
     }
+    /**
+     * Realiza la interacción relacionada con la eliminación de un producto.
+     */
     private void removeProduct() {
         List<Product> products = shopManager.getAllProducts();
         List<String> productData = new ArrayList<>();
@@ -296,6 +365,9 @@ public class Controller {
             }
         }
     }
+    /**
+     * Realiza la interacción relacionada con la búsqueda de productos.
+     */
     private void searchProducts() {
         String productName = ui.askForString("Enter your query: ");
         LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = getDictionaryWithProductAndShopsWhereExistsWithPrice(productName);
@@ -312,6 +384,16 @@ public class Controller {
             ui.showMessage("No products found.");
         }
     }
+
+    /**
+     * Obtiene un diccionario que mapea cada producto encontrado por la búsqueda
+     * con las tiendas donde está disponible y sus respectivos precios.
+     *
+     * @param productName Nombre del producto a buscar.
+     * @return Un diccionario que asocia cada producto con un subdiccionario que
+     *         mapea cada tienda donde está disponible con su precio.
+     *         Si no se encuentra ningún producto, devuelve null.
+     */
     private LinkedHashMap<Product, LinkedHashMap<Shop, Double>> getDictionaryWithProductAndShopsWhereExistsWithPrice(String productName) {
         LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = new LinkedHashMap<>();
         List<Product> productsFound = shopManager.searchProductsByQuery(productName);
@@ -336,12 +418,18 @@ public class Controller {
         shopCart.addProductToCart(sp);
         ui.showMessage("1x \"" + sp.getProductName() + "\" by \"" + sp.getBrand() + "\" has been added to your cart.\n");
     }
+    /**
+     * Realiza la interacción relacionada con la limpieza del carrito de compras.
+     */
     private void clearCart() {
         if (ui.askForConfirmation("Are you sure you want to clear your cart?")) {
             shopCart.clearCart();
             ui.showMessage("Your cart has been cleared.\n");
         }
     }
+    /**
+     * Realiza la interacción relacionada con el proceso de pago y vacía el carrito de compras.
+     */
     private void checkout() {
         if (ui.askForConfirmation("Are you sure you want to checkout?")) {
 
@@ -362,6 +450,11 @@ public class Controller {
     }
 
     //REVIEWS
+    /**
+     * Realiza la interacción relacionada con las revisiones de un producto.
+     *
+     * @param p Producto asociado a las revisiones.
+     */
     private void readReviews(Product p) {
         // List reviews from product selected.
         List<Review> reviews = shopManager.readReviews(p.getProductName());
@@ -377,6 +470,11 @@ public class Controller {
             ui.showMessage("Average rating: " + (sum/reviews.size()) + "\n");
         }
     }
+    /**
+     * Realiza la interacción relacionada con la creación de revisiones de un producto.
+     *
+     * @param p Producto asociado a la revisión.
+     */
     private void makeReviews(Product p) {
         // Make a review for the product selected.
         String stars = ui.askForString("Please rate the product (1-5 stars): ");
@@ -388,6 +486,9 @@ public class Controller {
     }
 
     //EXIT
+    /**
+     * Realiza la interacción relacionada con la salida del programa.
+     */
     private void exit() {
         ui.showMessage("We hope to see you again!");
     }

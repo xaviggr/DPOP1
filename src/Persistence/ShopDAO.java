@@ -12,8 +12,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("unused")
+/**
+ * Clase que implementa operaciones de lectura y escritura específicas para tiendas en formato JSON.
+ * Extiende la clase abstracta DAOJSON y utiliza Gson para la serialización y deserialización de datos.
+ *
+ * @see DAOJSON
+ * @see com.google.gson.Gson
+ */
+@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class ShopDAO extends DAOJSON {
+
+    /**
+     * Constructor que establece la ruta del archivo JSON asociado a las tiendas.
+     * Verifica si el archivo existe y lo crea si no.
+     */
     public ShopDAO() {
         this.path = "shops.json";
         try {
@@ -27,11 +39,22 @@ public class ShopDAO extends DAOJSON {
         }
     }
 
+    /**
+     * Obtiene una tienda por su nombre.
+     *
+     * @param shopName El nombre de la tienda a buscar.
+     * @return La tienda encontrada, o null si no se encontró ninguna tienda con ese nombre.
+     */
     public Shop getShop(String shopName) {
         List<Shop> shopsList = getShops();
         return findShopByName(shopsList, shopName);
     }
 
+    /**
+     * Obtiene una lista de todas las tiendas almacenadas en el archivo JSON.
+     *
+     * @return Una lista de objetos Shop que representan todas las tiendas.
+     */
     public List<Shop> getShops() {
         JsonArray shops = readAllFromFile();
         List<Shop> shopsList = new ArrayList<>();
@@ -44,6 +67,12 @@ public class ShopDAO extends DAOJSON {
         return shopsList;
     }
 
+    /**
+     * Obtiene una lista de tiendas donde un producto específico existe en el catálogo.
+     *
+     * @param productName El nombre del producto a buscar en los catálogos de las tiendas.
+     * @return Una lista de tiendas que tienen el producto en su catálogo.
+     */
     public List<Shop> getShopsWhereProductExistsInCatalog(String productName) {
         List<Shop> shops = getShops();
         List<Shop> shopsWithProduct = new ArrayList<>();
@@ -57,10 +86,24 @@ public class ShopDAO extends DAOJSON {
         return shopsWithProduct;
     }
 
+    /**
+     * Obtiene una lista de productos de una tienda específica.
+     *
+     * @param shopName El nombre de la tienda.
+     * @return Una lista de objetos ShopProduct que representan los productos de la tienda.
+     */
     public List<ShopProduct> getProductsFromShop(String shopName) {
         return getShop(shopName).getCatalog().getProducts();
     }
 
+
+    /**
+     * Obtiene un producto específico de una tienda por su nombre.
+     *
+     * @param shopName       El nombre de la tienda.
+     * @param productName    El nombre del producto.
+     * @return El objeto ShopProduct encontrado, o null si no se encontró.
+     */
     public ShopProduct getProductFromShop(String shopName, String productName) {
         List<ShopProduct> products = getProductsFromShop(shopName);
 
@@ -72,6 +115,14 @@ public class ShopDAO extends DAOJSON {
         return null;
     }
 
+
+    /**
+     * Agrega un producto a la tienda especificada.
+     *
+     * @param shopName     El nombre de la tienda.
+     * @param shopProduct  El objeto ShopProduct que se va a agregar.
+     * @return true si la operación fue exitosa, false si la tienda no existe.
+     */
     public boolean addProductInShop(String shopName, ShopProduct shopProduct) {
         List<Shop> shops = getShops();
         Shop shop = findShopByName(shops, shopName);
@@ -84,6 +135,13 @@ public class ShopDAO extends DAOJSON {
         return false;
     }
 
+    /**
+     * Actualiza la información de un producto específico en la tienda.
+     *
+     * @param shopName     El nombre de la tienda.
+     * @param shopProduct  El objeto ShopProduct con la información actualizada.
+     * @return true si la operación fue exitosa, false si la tienda o el producto no existen.
+     */
     public boolean updateProductFromShop(String shopName, ShopProduct shopProduct) {
         List<Shop> shops = getShops();
         Shop shop = findShopByName(shops, shopName);
@@ -98,6 +156,13 @@ public class ShopDAO extends DAOJSON {
         return false;
     }
 
+    /**
+     * Elimina un producto específico de la tienda por su nombre.
+     *
+     * @param shopName        El nombre de la tienda.
+     * @param shopProductName El nombre del producto a eliminar.
+     * @return true si la operación fue exitosa, false si la tienda o el producto no existen.
+     */
     public boolean removeProductFromShop(String shopName, String shopProductName) {
         List<Shop> shops = getShops();
         Shop shop = findShopByName(shops, shopName);
@@ -112,7 +177,13 @@ public class ShopDAO extends DAOJSON {
         return false;
     }
 
-    //Hecho publico
+    /**
+     * Encuentra una tienda por su nombre en una lista dada.
+     *
+     * @param shops     La lista de tiendas.
+     * @param shopName  El nombre de la tienda a buscar.
+     * @return La tienda encontrada, o null si no se encontró ninguna tienda con ese nombre.
+     */
     public Shop findShopByName(List<Shop> shops, String shopName) {
         for (Shop currentShop : shops) {
             if (currentShop.getName().equals(shopName)) {
@@ -122,12 +193,24 @@ public class ShopDAO extends DAOJSON {
         return null;
     }
 
+    /**
+     * Agrega una nueva tienda al archivo JSON.
+     *
+     * @param shop La tienda a agregar.
+     * @return true si la operación fue exitosa, false si hubo algún error.
+     */
     public boolean addShop(Shop shop) {
         List<Shop> shops = getShops();
         shops.add(shop);
         return saveShopsToFile(shops);
     }
 
+    /**
+     * Crea una tienda a partir de un JsonObject obtenido de la lectura del archivo JSON.
+     *
+     * @param shopObject El JsonObject que representa la tienda en formato JSON.
+     * @return Un objeto Shop creado a partir del JsonObject.
+     */
     private Shop createShopFromJsonObject(JsonObject shopObject) {
         String name = shopObject.get("name").getAsString();
         String description = shopObject.get("description").getAsString();
@@ -151,6 +234,12 @@ public class ShopDAO extends DAOJSON {
         return new Shop(name, description, foundationYear, earnings, businessModel, new Catalog(products));
     }
 
+    /**
+     * Guarda la información de todas las tiendas en el archivo JSON.
+     *
+     * @param shops La lista de tiendas a guardar.
+     * @return true si la operación fue exitosa, false si hubo algún error.
+     */
     private boolean saveShopsToFile(List<Shop> shops) {
         JsonArray jsonArray = new JsonArray();
 
@@ -180,6 +269,11 @@ public class ShopDAO extends DAOJSON {
         return saveToFile(jsonArray);
     }
 
+    /**
+     * Elimina un producto de todas las tiendas por su nombre.
+     *
+     * @param nameProduct El nombre del producto a eliminar de todas las tiendas.
+     */
     public void removeProductFromShops(String nameProduct) {
         List<Shop> shops = getShops();
         for (Shop shop : shops) {
@@ -188,6 +282,11 @@ public class ShopDAO extends DAOJSON {
         saveShopsToFile(shops);
     }
 
+    /**
+     * Obtiene una lista de nombres de todas las tiendas almacenadas en el archivo JSON.
+     *
+     * @return Una lista de nombres de tiendas.
+     */
     public List<String> getAllNameShops() {
         List<Shop> shops = getShops();
         List<String> names = new ArrayList<>();
@@ -197,6 +296,12 @@ public class ShopDAO extends DAOJSON {
         return names;
     }
 
+    /**
+     * Obtiene una lista de nombres de todos los productos de una tienda específica.
+     *
+     * @param shopName El nombre de la tienda.
+     * @return Una lista de nombres de productos de la tienda.
+     */
     public List<String> getAllProductsNameFromShop(String shopName) {
         List<ShopProduct> products = getProductsFromShop(shopName);
         List<String> names = new ArrayList<>();
@@ -206,6 +311,11 @@ public class ShopDAO extends DAOJSON {
         return names;
     }
 
+    /**
+     * Actualiza las ganancias de una tienda específica.
+     *
+     * @param shop La tienda con las ganancias actualizadas.
+     */
     public void updateShop(Shop shop) {
         List<Shop> shops = getShops();
         for (Shop currentShop : shops) {

@@ -7,13 +7,29 @@ import com.google.gson.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+/**
+ * Clase que implementa operaciones de lectura y escritura específicas para productos en formato JSON.
+ * Extiende la clase abstracta DAOJSON y utiliza Gson para la serialización y deserialización de datos.
+ *
+ * @see DAOJSON
+ * @see com.google.gson.Gson
+ */
+@SuppressWarnings({"unused", "UnusedReturnValue", "SpellCheckingInspection"})
 public class ProductDAO extends DAOJSON {
 
+    /**
+     * Constructor que establece la ruta del archivo JSON asociado a los productos.
+     */
     public ProductDAO() {
         this.path = "products.json";
     }
 
+    /**
+     * Convierte un objeto Product a un JsonObject para su representación en formato JSON.
+     *
+     * @param product El producto a convertir.
+     * @return Un JsonObject que representa el producto en formato JSON.
+     */
     private JsonObject productToJson(Product product) {
         JsonObject productJson = new JsonObject();
         productJson.addProperty("name", product.getProductName());
@@ -24,6 +40,12 @@ public class ProductDAO extends DAOJSON {
         return productJson;
     }
 
+    /**
+     * Convierte una lista de objetos Review a un JsonArray para su representación en formato JSON.
+     *
+     * @param reviews La lista de revisiones a convertir.
+     * @return Un JsonArray que representa las revisiones en formato JSON.
+     */
     private JsonArray reviewsToJsonArray(List<Review> reviews) {
         JsonArray reviewsArray = new JsonArray();
         for (Review review : reviews) {
@@ -35,6 +57,12 @@ public class ProductDAO extends DAOJSON {
         return reviewsArray;
     }
 
+    /**
+     * Convierte un JsonObject a un objeto Product después de leerlo desde el formato JSON.
+     *
+     * @param productObject El JsonObject que representa el producto en formato JSON.
+     * @return Un objeto Product creado a partir del JsonObject.
+     */
     private Product jsonToProduct(JsonObject productObject) {
         String name = productObject.get("name").getAsString();
         String brand = productObject.get("brand").getAsString();
@@ -56,6 +84,12 @@ public class ProductDAO extends DAOJSON {
         return product;
     }
 
+    /**
+     * Agrega un nuevo producto al archivo JSON.
+     *
+     * @param product El producto a agregar.
+     * @return true si la operación fue exitosa, false si hubo algún error.
+     */
     public boolean addProduct(Product product) {
         JsonArray products = readAllFromFile();
         JsonObject newProduct = productToJson(product);
@@ -63,6 +97,12 @@ public class ProductDAO extends DAOJSON {
         return saveToFile(products);
     }
 
+    /**
+     * Actualiza la información de un producto existente en el archivo JSON.
+     *
+     * @param product El producto con la información actualizada.
+     * @return true si la operación fue exitosa, false si el producto no existe.
+     */
     public boolean updateProduct(Product product) {
         JsonArray products = readAllFromFile();
 
@@ -80,6 +120,12 @@ public class ProductDAO extends DAOJSON {
         return false;
     }
 
+    /**
+     * Elimina un producto del archivo JSON por su nombre.
+     *
+     * @param productName El nombre del producto a eliminar.
+     * @return true si la operación fue exitosa, false si el producto no existe.
+     */
     public boolean removeProduct(String productName) {
         JsonArray products = readAllFromFile();
 
@@ -94,6 +140,12 @@ public class ProductDAO extends DAOJSON {
         return false;
     }
 
+    /**
+     * Busca un producto por su nombre en el archivo JSON.
+     *
+     * @param productName El nombre del producto a buscar.
+     * @return El objeto Product encontrado, o null si no se encontró ningún producto con ese nombre.
+     */
     public Product findProduct(String productName) {
         JsonArray products = readAllFromFile();
 
@@ -106,6 +158,12 @@ public class ProductDAO extends DAOJSON {
         return null;
     }
 
+    /**
+     * Busca productos que coincidan con la consulta en el archivo JSON.
+     *
+     * @param query La consulta para buscar productos.
+     * @return Una lista de productos que coinciden con la consulta.
+     */
     public List<Product> findProductsByQuery(String query) {
         JsonArray products = readAllFromFile();
         List<Product> productList = new ArrayList<>();
@@ -126,7 +184,11 @@ public class ProductDAO extends DAOJSON {
         return productList;
     }
 
-    //Nuevo
+    /**
+     * Obtiene todos los productos almacenados en el archivo JSON.
+     *
+     * @return Una lista que contiene todos los productos.
+     */
     public List<Product> getAllProducts() {
         JsonArray products = readAllFromFile();
         List<Product> productList = new ArrayList<>();
