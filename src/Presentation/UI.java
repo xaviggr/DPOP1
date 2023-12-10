@@ -14,12 +14,12 @@ import java.util.Scanner;
 public class UI {
 
     private static final String MAIN_LOGO = """
-             ________ ____
-             ___ / / ____/___ / __/_______
-             / _ \\/ / / / __ \\/ /_/ ___/ _ \\
-            / __/ / /___/ /_/ / __/ / / __/
-            \\___/_/\\____/\\____/_/ /_/ \\___/\s
-            Welcome to elCofre Digital Shopping Experiences!
+                    __           ____       \s
+              ___  / /________  / __/_______\s
+             / _ \\/ / ___/ __ \\/ /_/ ___/ _ \\
+            /  __/ / /__/ /_/ / __/ /  /  __/
+            \\___/_/\\___/\\____/_/ /_/   \\___/\s
+                                            \s
             """;
     private final Scanner scanner;
 
@@ -182,7 +182,7 @@ public class UI {
     }
     public void showFileConfirmation() {
         System.out.println("Verifying local files...");
-        System.out.println("Starting program...");
+        System.out.println("Starting program...\n");
     }
     public void showMessage(String message) {
         System.out.println(message);
