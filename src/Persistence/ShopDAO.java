@@ -171,4 +171,10 @@ public class ShopDAO extends DAOJSON {
         }
         return saveToFile(jsonArray);
     }
+
+    public boolean addShop(Shop shop) {
+        List<Shop> shops = getShops();
+        shops.add(shop);
+        return saveShopsToFile(shops);
+    }
 }
