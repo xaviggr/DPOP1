@@ -4,7 +4,9 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import Bussines.Product.Product;
 import Bussines.Product.ProductCategory;
+import Bussines.Product.ShopProduct;
 
 public class UI {
 
@@ -46,10 +48,25 @@ public class UI {
         System.out.println(message);
     }
 
-    public void showList(List<String> items) {
-        for (String item : items) {
-            System.out.println("\t* " + item);
+    public int showProductList(List<Product> items) {
+        int i = 0;
+        for (i = 0; i < items.size(); i++) {
+            Product sp = items.get(i);
+            System.out.println((i + 1) + ") " + sp.getProductName() + " by " + sp.getBrand());
         }
+        System.out.println();
+        System.out.println((i + 1) + ")" + "Back\n");
+
+        int index;
+        do {
+            index = askForInteger("Which one would you like to remove? ");
+
+            if (index < 1 || index > items.size() + 1) {
+                showMessage("Invalid Option");
+            }
+        } while (index < 1 || index > items.size() + 1);
+
+        return index;
     }
 
     public void showMenu() {
@@ -136,8 +153,31 @@ public class UI {
     }
 
     //New function
+    public int showProductsInShop(List<ShopProduct> items) {
+        int i = 0;
+        showMessage("");
+        for (i = 0; i < items.size(); i++) {
+            Product sp = items.get(i);
+            System.out.println("\t"+(i + 1) + ") " + sp.getProductName() + " by " + sp.getBrand());
+        }
+        System.out.println();
+        System.out.println("\t" + (i + 1) + ")" + "Back\n");
+
+        int index;
+        do {
+            index = askForInteger("Which one would you like to remove? ");
+
+            if (index < 1 || index > items.size() + 1) {
+                showMessage("Invalid Option");
+            }
+        } while (index < 1 || index > items.size() + 1);
+
+        return index;
+    }
+
+    //New function
     public int askForConfirmation(String name, String brand) {
-        System.out.println("Are you sure you want to remove " + "'"+name+"'" + " by " + "'"+brand+"'" + "?\n");
+        System.out.print("Are you sure you want to remove " + "'"+name+"'" + " by " + "'"+brand+"'" + "?");
         boolean valid = false;
         while (!valid) {
             String answer = scanner.nextLine().toLowerCase();
@@ -150,7 +190,7 @@ public class UI {
                     return 0;
                 }
             } else {
-                System.out.println("Please enter 'yes' or 'no': ");
+                System.out.print("Please enter 'yes' or 'no': ");
             }
         }
         return -1;

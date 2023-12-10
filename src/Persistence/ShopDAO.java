@@ -112,7 +112,8 @@ public class ShopDAO extends DAOJSON {
         return false;
     }
 
-    private Shop findShopByName(List<Shop> shops, String shopName) {
+    //Hecho publico
+    public Shop findShopByName(List<Shop> shops, String shopName) {
         for (Shop currentShop : shops) {
             if (currentShop.getName().equals(shopName)) {
                 return currentShop;
@@ -170,5 +171,11 @@ public class ShopDAO extends DAOJSON {
             jsonArray.add(shopObject);
         }
         return saveToFile(jsonArray);
+    }
+
+    public boolean addShop(Shop shop) {
+        List<Shop> shops = getShops();
+        shops.add(shop);
+        return saveShopsToFile(shops);
     }
 }

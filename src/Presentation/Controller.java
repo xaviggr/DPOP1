@@ -2,10 +2,13 @@ package Presentation;
 
 import Bussines.Product.Product;
 import Bussines.Product.ProductCategory;
+import Bussines.Product.ShopProduct;
 import Bussines.Shop;
 import Bussines.ShopManager;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
 
@@ -84,9 +87,11 @@ public class Controller {
     private void productsLoop(int choose) {
         switch (choose) {
             case 1:
+                ui.showMessage("");
                 createProduct();
                 break;
             case 2:
+                ui.showMessage("");
                 removeProduct();
                 break;
             case 3:
@@ -126,6 +131,7 @@ public class Controller {
         }
     }
 
+    //FULLY DONE
     private void createProduct() {
         String name = ui.askForString("Please enter the product’s name: ");
         String brand = ui.askForString("Please enter the product’s brand: ");
@@ -160,26 +166,29 @@ public class Controller {
         };
     }
 
-    //NEEDS WORK WHEN DAO IS DONE
+    //FULLY DONE
     private void removeProduct() {
-        String productName = ui.askForString("Enter the name of the product: ");
 
-        // list all products here
-        //ask user to choose product get name of that product and pass it to the functions.
-
-
-        Product p = shopManager.findProduct(productName);
-        int option = ui.askForConfirmation(p.getProductName(), p.getProductBrand());
-
-        if(option == 1) {
-            shopManager.removeProduct(productName);
-            ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " has been withdrawn from sale.\n");
+        List<Product> list = new ArrayList<>();
+        list = shopManager.getAllProducts();
+        int index = ui.showProductList(list);
+        if (index > list.size()) {
+            //back
+            return;
         }
+
         else {
-            ui.showMessage("Operation Canceled\n");
+            Product p = list.get(index - 1);
+            int option = ui.askForConfirmation(p.getProductName(), p.getProductBrand());
+
+            if(option == 1) {
+                shopManager.removeProduct(p.getProductName());
+                ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " has been withdrawn from sale.\n");
+            }
+            else {
+                ui.showMessage("Operation Canceled\n");
+            }
         }
-
-
     }
 
     // New function
@@ -207,6 +216,7 @@ public class Controller {
 
     }
 
+    //Falta arreglar que pasa cuando el catalogo es null
     private void createShop() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String description = ui.askForString("Please enter the shop's description: ");
@@ -218,24 +228,46 @@ public class Controller {
         ui.showMessage("'" + shopName + "'"  + " is now a part of the elCofre family.\n");
     }
 
+    // FULLY DONE
     private void expandCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String productName = ui.askForString("Please enter the product's name: ");
-        double price = ui.askForDouble("Please enter the product's price at this shop");
+        double price = ui.askForDouble("Please enter the product's price at this shop: ");
         Product p = shopManager.findProduct(productName);
-        if (p == null) {
-            ui.showMessage("Error. That product doesn't exist.\n");
+        Shop s = shopManager.findShopByName(shopName);
+        if (p == null || s == null) {
+            if(p == null) {
+                ui.showMessage("Error. That product doesn't exist.\n");
+            } else {
+                ui.showMessage("Error. That shop doesn't exist.\n");
+            }
         } else {
-            shopManager.expandCatalog(shopName, productName, price);
+            ShopProduct sp = new ShopProduct(p.getProductName(),p.getProductBrand(),p.getMaxPrice(),p.getCategory(),price);
+            shopManager.expandCatalog(shopName, sp);
             ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " is now being sold at " + "'"+shopName+"'"+".\n");
         }
 
     }
 
-    //NEEDS WORK WHEN DAO IS DONE
+    //FULLY DONE
     private void reduceCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
-        shopManager.reduceCatalog(shopName);
+        List<ShopProduct> list = shopManager.getAllProductsFromShop(shopName);
+        ui.showMessage("This shop sells the following products:");
+        int index = ui.showProductsInShop(list);
+
+        if (index > list.size()) {
+            //back
+            return;
+        }
+
+        else {
+            ShopProduct p = list.get(index - 1);
+            shopManager.reduceCatalog(shopName,p.getProductName());
+            ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " is no longer being sold at " + shopName);
+
+        }
+
     }
 
     private void addToCard() {

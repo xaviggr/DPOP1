@@ -7,6 +7,7 @@ import Persistence.ShopDAO;
 import Bussines.Product.Product;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class ShopManager {
 
@@ -20,22 +21,23 @@ public class ShopManager {
 
     public void createProduct(String name, String brand, double maxPrice, ProductCategory category) {
         Product product = new Product(name, brand, maxPrice, category);
+        productDAO.addProduct(product);
     }
 
     public void removeProduct(String nameProduct) {
-
+        productDAO.removeProduct(nameProduct);
     }
 
     public void createShop(Shop shop) {
-
+        shopDAO.addShop(shop);
     }
 
-    public void expandCatalog(String shopName, String productName, double price) {
-
+    public void expandCatalog(String shopName, ShopProduct sp) {
+        shopDAO.addProductInShop(shopName,sp);
     }
 
-    public void reduceCatalog(String shopName) {
-
+    public void reduceCatalog(String shopName, String productName) {
+        shopDAO.removeProductFromShop(shopName,productName);
     }
 
     public Product findProduct(String nameProduct) {
@@ -64,5 +66,26 @@ public class ShopManager {
 
     public void checkIfFileExists() throws FileNotFoundException {
         productDAO.checkIfFileExists();
+    }
+
+    //New function
+    public List<Product> getAllProducts() {
+        return productDAO.getAllProducts();
+    }
+
+    // New function
+    public List<ShopProduct> getAllProductsFromShop(String shopName) {
+        return shopDAO.getProductsFromShop(shopName);
+    }
+
+
+    //New function
+    public List<Shop> getAllShops() {
+        return shopDAO.getShops();
+    }
+
+    public Shop findShopByName(String shopName) {
+        List<Shop> list = shopDAO.getShops();
+         return shopDAO.findShopByName(list,shopName);
     }
 }
