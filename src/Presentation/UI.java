@@ -153,6 +153,29 @@ public class UI {
     }
 
     //New function
+    public int showProductsInShop(List<ShopProduct> items) {
+        int i = 0;
+        showMessage("");
+        for (i = 0; i < items.size(); i++) {
+            Product sp = items.get(i);
+            System.out.println("\t"+(i + 1) + ") " + sp.getProductName() + " by " + sp.getBrand());
+        }
+        System.out.println();
+        System.out.println("\t" + (i + 1) + ")" + "Back\n");
+
+        int index;
+        do {
+            index = askForInteger("Which one would you like to remove? ");
+
+            if (index < 1 || index > items.size() + 1) {
+                showMessage("Invalid Option");
+            }
+        } while (index < 1 || index > items.size() + 1);
+
+        return index;
+    }
+
+    //New function
     public int askForConfirmation(String name, String brand) {
         System.out.print("Are you sure you want to remove " + "'"+name+"'" + " by " + "'"+brand+"'" + "?");
         boolean valid = false;
