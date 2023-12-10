@@ -249,6 +249,7 @@ public class Controller {
 
     }
 
+    //FULLY DONE
     private void reduceCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         List<ShopProduct> list = shopManager.getAllProductsFromShop(shopName);
