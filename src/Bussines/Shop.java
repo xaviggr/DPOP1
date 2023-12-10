@@ -50,4 +50,8 @@ public class Shop {
             this.catalog = catalog;
         }
     }
+
+    public void setEarnings(double v) {
+        this.earnings = v;
+    }
 }

@@ -5,6 +5,7 @@ import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
 import Bussines.Review;
 import Bussines.Shop;
+import Bussines.ShopCart;
 import Bussines.ShopManager;
 
 import java.io.FileNotFoundException;
@@ -18,9 +19,12 @@ public class Controller {
     private final UI ui;
     private final ShopManager shopManager;
 
-    public Controller(UI ui, ShopManager shopManager) {
+    private final ShopCart shopCart;
+
+    public Controller(UI ui, ShopManager shopManager, ShopCart shopCart) {
         this.ui = ui;
         this.shopManager = shopManager;
+        this.shopCart = shopCart;
     }
 
     public void run() {
@@ -74,7 +78,9 @@ public class Controller {
                 break;
             case 5:
                 // Your cart.
-
+                ui.showCart(shopCart);
+                choose = ui.showCartMenu();
+                shopCartInteraction(choose);
                 break;
             case 6:
                 exit();
@@ -149,7 +155,7 @@ public class Controller {
                 break;
         }
     }
-    private void listShopsInteraction(int choose, Product p) {
+    private void listShopsInteraction(int choose, ShopProduct p) {
 
         switch (choose) {
             case 1:
@@ -162,7 +168,7 @@ public class Controller {
                 break;
             case 3:
                 ui.showMessage("");
-                //addToCart();
+                addToCart(p);
                 break;
             case 4:
                 //Back
@@ -172,6 +178,26 @@ public class Controller {
                 break;
         }
     }
+    private void shopCartInteraction(int choose) {
+
+        switch (choose) {
+            case 1:
+                ui.showMessage("");
+                checkout();
+                break;
+            case 2:
+                ui.showMessage("");
+                clearCart();
+                break;
+            case 3:
+                //Back
+                break;
+            default:
+                ui.showMessage("Invalid option.");
+                break;
+        }
+    }
+
 
     //SHOPS
     private void createShop() {
@@ -197,9 +223,9 @@ public class Controller {
                 ui.showMessage("Error. That shop doesn't exist.\n");
             }
         } else {
-            ShopProduct sp = new ShopProduct(p.getProductName(),p.getProductBrand(),p.getMaxPrice(),p.getCategory(),price);
+            ShopProduct sp = new ShopProduct(p.getProductName(),p.getBrand(),p.getMaxPrice(),p.getCategory(),price);
             shopManager.expandCatalog(shopName, sp);
-            ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " is now being sold at " + "'"+shopName+"'"+".\n");
+            ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getBrand()+"'" + " is now being sold at " + "'"+shopName+"'"+".\n");
         }
 
     }
@@ -249,7 +275,7 @@ public class Controller {
     private void removeProduct() {
         List<Product> products = shopManager.getAllProducts();
         List<String> productData = new ArrayList<>();
-        products.forEach(p -> productData.add("\"" +p.getProductName() + "\" by \"" + p.getProductBrand() + "\""));
+        products.forEach(p -> productData.add("\"" +p.getProductName() + "\" by \"" + p.getBrand() + "\""));
 
         if (products.isEmpty()) {
             ui.showMessage("There are no products available.");
@@ -262,9 +288,9 @@ public class Controller {
 
         if (ui.isValidIndex(index, productData.size() - 1)) {
             Product p = products.get(index - 1);
-            if (ui.askForConfirmation(p.getProductName(), p.getProductBrand())) {
+            if (ui.askForConfirmation("Are you sure you want to remove \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"?")) {
                 shopManager.removeProduct(p.getProductName());
-                ui.showMessage("\"" + p.getProductName() + "\"" + " by " + "\"" + p.getProductBrand()+ "\"" + " has been withdrawn from sale.\n");
+                ui.showMessage("\"" + p.getProductName() + "\"" + " by " + "\"" + p.getBrand()+ "\"" + " has been withdrawn from sale.\n");
             } else {
                 removeProduct();
             }
@@ -306,14 +332,33 @@ public class Controller {
     }
 
     //CART
-    private void addToCart() {
-
+    private void addToCart(ShopProduct sp) {
+        shopCart.addProductToCart(sp);
+        ui.showMessage("1x \"" + sp.getProductName() + "\" by \"" + sp.getBrand() + "\" has been added to your cart.\n");
     }
     private void clearCart() {
-
+        if (ui.askForConfirmation("Are you sure you want to clear your cart?")) {
+            shopCart.clearCart();
+            ui.showMessage("Your cart has been cleared.\n");
+        }
     }
     private void checkout() {
+        if (ui.askForConfirmation("Are you sure you want to checkout?")) {
 
+            for (ShopProduct sp : shopCart.getProductList()) {
+                List<Shop> shops = shopManager.getShopsWhereProductExistsInCatalog(sp.getProductName());
+                for (Shop s : shops){
+                    if (shopManager.getProductFromShop(s.getName(), sp.getProductName()).getProductPrice() == sp.getProductPrice()) {
+                        ui.showMessage("\"" + s.getName() + "\" has earned " + sp.getProductPrice() + ", for an historic total of " + s.getEarnings() + ".\n");
+                        s.setEarnings(s.getEarnings() + sp.getProductPrice());
+                        shopManager.checkout(s);
+                    }
+                }
+            }
+
+            ui.showMessage("Your cart has been cleared.\n");
+            shopCart.clearCart();
+        }
     }
 
     //REVIEWS
@@ -323,7 +368,7 @@ public class Controller {
         if (reviews.isEmpty()) {
             ui.showMessage("There are no reviews for this product yet.");
         } else {
-            ui.showMessage("These are the reviews for \"" + p.getProductName() + "\" by \"" + p.getProductBrand() + "\":");
+            ui.showMessage("These are the reviews for \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\":");
             float sum = 0;
             for (Review r : reviews) {
                 sum += r.getStars();
@@ -339,7 +384,7 @@ public class Controller {
         Review review = new Review(stars, commentary);
         shopManager.makeReview(p.getProductName(), review);
 
-        ui.showMessage("Thank you for your review of \"" + p.getProductName() + "\" by \"" + p.getProductBrand() + "\"");
+        ui.showMessage("Thank you for your review of \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"");
     }
 
     //EXIT

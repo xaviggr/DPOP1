@@ -205,4 +205,14 @@ public class ShopDAO extends DAOJSON {
         }
         return names;
     }
+
+    public void updateShop(Shop shop) {
+        List<Shop> shops = getShops();
+        for (Shop currentShop : shops) {
+            if (currentShop.getName().equals(shop.getName())) {
+                currentShop.setEarnings(shop.getEarnings());
+            }
+        }
+        saveShopsToFile(shops);
+    }
 }

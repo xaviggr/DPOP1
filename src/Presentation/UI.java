@@ -4,6 +4,7 @@ import Bussines.Product.Product;
 import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
 import Bussines.Shop;
+import Bussines.ShopCart;
 
 import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
@@ -57,8 +58,8 @@ public class UI {
             }
         }
     }
-    public boolean askForConfirmation(String name, String brand) {
-        System.out.print("Are you sure you want to remove \"" + name + "\" by \"" + brand + "\"?");
+    public boolean askForConfirmation(String message) {
+        System.out.print(message);
         while (true) {
             String answer = scanner.nextLine().toLowerCase();
 
@@ -122,10 +123,10 @@ public class UI {
     }
 
     //GENERAL METHODS
-    private <T> void showListItems(List<T> items) {
+    public void showList(List<String> items) {
         if (!items.isEmpty()) {
             for (int i = 0; i < items.size(); i++) {
-                T item = items.get(i);
+                String item = items.get(i);
                 System.out.println((i + 1) + ") " + item);
             }
             System.out.println();
@@ -133,7 +134,7 @@ public class UI {
     }
     public int showListAndGetChoice(List<String> options, String message) {
         if (!options.isEmpty()) {
-            showListItems(options);
+            showList(options);
             System.out.println((options.size() + 1) + ") Back");
             return askForInteger(message);
         }
@@ -150,7 +151,7 @@ public class UI {
                 "Your Cart",
                 "Exit"
         );
-        showListItems(menuOptions);
+        showList(menuOptions);
     }
     public int showShopsMenu() {
         List<String> shopMenuOptions = List.of(
@@ -230,6 +231,10 @@ public class UI {
         List<String> options = List.of("Read Reviews", "Review Product", "Add to Cart");
         return showListAndGetChoice(options, message);
     }
+    public int showCartMenu() {
+        List<String> options = List.of("Checkout", "Clear cart");
+        return showListAndGetChoice(options, "Choose an option: ");
+    }
     public void showShopCatalogue(Shop s, List<ShopProduct> products) {
         if (!products.isEmpty()) {
             System.out.println(s.getName() + " - Since" + s.getFoundationYear());
@@ -241,6 +246,20 @@ public class UI {
             }
             System.out.println();
             System.out.println("\t" + (products.size() + 1) + ")" + "Back\n");
+        }
+    }
+    public void showCart(ShopCart shopCart) {
+        if (!shopCart.getProductList().isEmpty()) {
+            System.out.println("Your cart contains the following items:");
+            for (int i = 0; i < shopCart.getProductList().size(); i++) {
+                ShopProduct sp = shopCart.getProductList().get(i);
+                System.out.println("\t\t - \"" + sp.getProductName() + "\" by \"" + sp.getBrand() + "\"");
+                System.out.println("\t\t\tPrice: " + sp.getProductPrice() + "\n");
+            }
+
+            System.out.println("Total: " + shopCart.getTotalPrice());
+        } else {
+            System.out.println("Your cart is empty.");
         }
     }
 }

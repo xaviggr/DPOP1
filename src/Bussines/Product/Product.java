@@ -25,14 +25,6 @@ public class Product {
     public String getProductName() {
         return name;
     }
-  
-
-    //New function
-    public String getProductBrand() {
-        return brand;
-    }
-
-
     public double getMaxPrice() {
         return maxPrice;
     }

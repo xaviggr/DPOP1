@@ -59,18 +59,6 @@ public class ShopManager {
         productDAO.updateProduct(product);
     }
 
-    public void addToCart(ShopProduct shopProduct) {
-
-    }
-
-    public void checkout() {
-
-    }
-
-    public void clearCart() {
-
-    }
-
     public void checkIfFileExists() throws FileNotFoundException {
         productDAO.checkIfFileExists();
     }
@@ -113,5 +101,9 @@ public class ShopManager {
 
     public List<String> getAllProductsNameFromShop(String shopName) {
         return shopDAO.getAllProductsNameFromShop(shopName);
+    }
+
+    public void checkout(Shop s) {
+        shopDAO.updateShop(s);
     }
 }
