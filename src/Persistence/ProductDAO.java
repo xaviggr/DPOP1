@@ -4,6 +4,7 @@ import Bussines.Product.ProductCategory;
 import Bussines.Review;
 import com.google.gson.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -85,5 +86,18 @@ public class ProductDAO extends DAOJSON {
             }
         }
         return null;
+    }
+
+    //Nuevo
+    public List<Product> getAllProducts() {
+        JsonArray products = readAllFromFile();
+        List<Product> productList = new ArrayList<>();
+
+        for (JsonElement productElement : products) {
+            JsonObject productObject = productElement.getAsJsonObject();
+            productList.add(jsonToProduct(productObject));
+        }
+
+        return productList;
     }
 }
