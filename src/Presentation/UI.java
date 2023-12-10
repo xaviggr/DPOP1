@@ -1,22 +1,32 @@
 package Presentation;
 
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
-
 import Bussines.Product.Product;
 import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
+import Bussines.Shop;
+
+import java.util.InputMismatchException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Scanner;
 
 public class UI {
 
-    private static final String MAIN_LOGO = " ________ ____\n" + " ___ / / ____/___ / __/_______\n" + "/ _ \\/ / / / __ \\/ /_/ ___/ _ \\\n" + "/ __/ / /___/ /_/ / __/ / / __/\n" + "\\___/_/\\____/\\____/_/ /_/ \\___/ \n" + "Welcome to elCofre Digital Shopping Experiences!\n";
+    private static final String MAIN_LOGO = """
+             ________ ____
+             ___ / / ____/___ / __/_______
+             / _ \\/ / / / __ \\/ /_/ ___/ _ \\
+            / __/ / /___/ /_/ / __/ / / __/
+            \\___/_/\\____/\\____/_/ /_/ \\___/\s
+            Welcome to elCofre Digital Shopping Experiences!
+            """;
     private final Scanner scanner;
 
     public UI() {
         scanner = new Scanner(System.in);
     }
 
+    //ASK METHODS
     public int askForInteger(String message) {
         while (true) {
             try {
@@ -30,60 +40,10 @@ public class UI {
             }
         }
     }
-
-    public void showErrorLoadingFiles() {
-        System.out.println("""
-                    Verifying local files...
-                    Error: The products.json file can’t be accessed.
-                    Shutting down...
-                    """);
-    }
-
     public String askForString(String message) {
         System.out.print(message);
         return scanner.nextLine();
     }
-
-    public void showMessage(String message) {
-        System.out.println(message);
-    }
-
-    public int showProductList(List<Product> items) {
-        int i = 0;
-        for (i = 0; i < items.size(); i++) {
-            Product sp = items.get(i);
-            System.out.println((i + 1) + ") " + sp.getProductName() + " by " + sp.getBrand());
-        }
-        System.out.println();
-        System.out.println((i + 1) + ")" + "Back\n");
-
-        int index;
-        do {
-            index = askForInteger("Which one would you like to remove? ");
-
-            if (index < 1 || index > items.size() + 1) {
-                showMessage("Invalid Option");
-            }
-        } while (index < 1 || index > items.size() + 1);
-
-        return index;
-    }
-
-    public void showMenu() {
-        System.out.println("What would you like to do:");
-        System.out.println();
-        System.out.println("1) Manage Products");
-        System.out.println("2) Manage Shops");
-        System.out.println("3) Search Shops");
-        System.out.println("4) List Shops");
-        System.out.println("5) Your Cart\n");
-        System.out.println("6) Exit\n");
-    }
-
-    public void showMainLogo() {
-        System.out.println(MAIN_LOGO);
-    }
-
     public double askForDouble(String message) {
         while (true) {
             try {
@@ -97,41 +57,154 @@ public class UI {
             }
         }
     }
+    public boolean askForConfirmation(String name, String brand) {
+        System.out.print("Are you sure you want to remove \"" + name + "\" by \"" + brand + "\"?");
+        while (true) {
+            String answer = scanner.nextLine().toLowerCase();
 
-    //new function
+            if (answer.equals("yes") || answer.equals("no")) {
+                return answer.equals("yes");
+            } else {
+                System.out.print("Please enter 'yes' or 'no': ");
+            }
+        }
+    }
+    public String askForShopModel() {
+        String userInput;
+        boolean isValid = false;
+        showMessage("");
+        giveBusinessModel();
+        do {
+            userInput = askForString("Please pick the shop’s business model: ").toUpperCase();
+
+            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
+                isValid = true;
+            } else {
+                showMessage("Please enter a valid option (A, B, or C).");
+            }
+        } while (!isValid);
+
+        return switch (userInput) {
+            case "A" -> "Maximum Benefits";
+            case "B" -> "Loyalty";
+            case "C" -> "Sponsored";
+            default -> "Invalid Option";
+        };
+
+    }
+    public ProductCategory askForProductCategory() {
+        String userInput;
+
+        boolean isValid = false;
+        showMessage("");
+        giveProductCategory();
+        do {
+            userInput = askForString("Please pick the shop’s business model: ").toUpperCase();
+
+            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
+                isValid = true;
+            } else {
+                showMessage("Please enter a valid option (A, B, or C).");
+            }
+        } while (!isValid);
+
+        return switch (userInput) {
+            case "A" -> ProductCategory.GENERAL;
+            case "B" -> ProductCategory.REDUCED_TAXES;
+            case "C" -> ProductCategory.SUPER_REDUCED_TAXES;
+            default -> ProductCategory.valueOf("Invalid option");
+        };
+    }
+
+    //VALIDATION METHODS
+    public boolean isValidIndex(int index, int size) {
+        return index >= 1 && index <= size + 1;
+    }
+
+    //GENERAL METHODS
+    private <T> void showListItems(List<T> items) {
+        if (!items.isEmpty()) {
+            for (int i = 0; i < items.size(); i++) {
+                T item = items.get(i);
+                System.out.println((i + 1) + ") " + item);
+            }
+            System.out.println();
+        }
+    }
+    public int showListAndGetChoice(List<String> options, String message) {
+        if (!options.isEmpty()) {
+            showListItems(options);
+            System.out.println((options.size() + 1) + ") Back");
+            return askForInteger(message);
+        }
+        return -1;
+    }
+
+    //SHOW MENUS
+    public void showMenu() {
+        List<String> menuOptions = List.of(
+                "Manage Products",
+                "Manage Shops",
+                "Search Products",
+                "List Shops",
+                "Your Cart",
+                "Exit"
+        );
+        showListItems(menuOptions);
+    }
+    public int showShopsMenu() {
+        List<String> shopMenuOptions = List.of(
+                "Create a Shop",
+                "Expand a Shop's Catalogue",
+                "Reduce a Shop's Catalogue"
+        );
+        return showListAndGetChoice(shopMenuOptions, "Choose an option: ");
+    }
+    public int showProductsMenu() {
+        List<String> productMenuOptions = List.of(
+                "Create a Product",
+                "Remove a Product"
+        );
+        return showListAndGetChoice(productMenuOptions, "Choose an option: ");
+    }
+
+    //SHOW MESSAGES / DATA
+    public void showMainLogo() {
+        System.out.println(MAIN_LOGO);
+    }
+    public void showErrorLoadingFiles() {
+        System.out.println("""
+                    Verifying local files...
+                    Error: The products.json file can’t be accessed.
+                    Shutting down...
+                    """);
+    }
     public void showFileConfirmation() {
         System.out.println("Verifying local files...");
         System.out.println("Starting program...");
     }
-
-    // new function
-    public int showProductsMenu() {
-        int option;
-
-        System.out.println("1) Create a Product");
-        System.out.println("2) Remove a Product");
-        System.out.println();
-        System.out.println("3) Back");
-        option = askForInteger("Choose an option: ");
-
-        return option;
+    public void showMessage(String message) {
+        System.out.println(message);
     }
 
-    //New function
-    public int showShopsMenu() {
-        int option;
-
-        System.out.println("1) Create a Shop");
-        System.out.println("2) Expand a Shop's Catalogue");
-        System.out.println("3) Reduce a Shop's Catalogue");
-        System.out.println();
-        System.out.println("4) Back");
-        option = askForInteger("Choose an option: ");
-
-        return option;
+    //SHOW DATA
+    public void showProductSearched(LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products) {
+        if (!products.isEmpty()) {
+            for (int i = 0; i < products.size(); i++) {
+                Product p = (Product) products.keySet().toArray()[i];
+                System.out.println("\t" + (i + 1) + ") \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"");
+                if (products.get(p).keySet().isEmpty()) {
+                    System.out.println("\t\tThis product is not currently being sold in any shops.");
+                } else {
+                    for (Shop s: products.get(p).keySet()) {
+                        System.out.println("\t\t\t - " + s.getName() + ": " + products.get(p).get(s));
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println("\n\t" + (products.size() + 1) + ") " + " Back");
+        }
     }
-
-    //New function
     public void giveBusinessModel() {
 
         System.out.println("The system supports the following business models:");
@@ -141,8 +214,6 @@ public class UI {
         System.out.println();
 
     }
-
-    // New function
     public void giveProductCategory() {
 
         System.out.println("The system supports the following product categories:");
@@ -151,48 +222,25 @@ public class UI {
         System.out.println("C) Superreduced taxes");
         System.out.println();
     }
-
-    //New function
-    public int showProductsInShop(List<ShopProduct> items) {
-        int i = 0;
-        showMessage("");
-        for (i = 0; i < items.size(); i++) {
-            Product sp = items.get(i);
-            System.out.println("\t"+(i + 1) + ") " + sp.getProductName() + " by " + sp.getBrand());
-        }
-        System.out.println();
-        System.out.println("\t" + (i + 1) + ")" + "Back\n");
-
-        int index;
-        do {
-            index = askForInteger("Which one would you like to remove? ");
-
-            if (index < 1 || index > items.size() + 1) {
-                showMessage("Invalid Option");
-            }
-        } while (index < 1 || index > items.size() + 1);
-
-        return index;
+    public int showReviewMenu(String message) {
+        List<String> options = List.of("Read Reviews", "Review Product");
+        return showListAndGetChoice(options, message);
     }
-
-    //New function
-    public int askForConfirmation(String name, String brand) {
-        System.out.print("Are you sure you want to remove " + "'"+name+"'" + " by " + "'"+brand+"'" + "?");
-        boolean valid = false;
-        while (!valid) {
-            String answer = scanner.nextLine().toLowerCase();
-
-            if (answer.equals("yes") || answer.equals("no")) {
-                valid = true;
-                if (answer.equals("yes")) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            } else {
-                System.out.print("Please enter 'yes' or 'no': ");
+    public int showCatalogMenu(String message) {
+        List<String> options = List.of("Read Reviews", "Review Product", "Add to Cart");
+        return showListAndGetChoice(options, message);
+    }
+    public void showShopCatalogue(Shop s, List<ShopProduct> products) {
+        if (!products.isEmpty()) {
+            System.out.println(s.getName() + " - Since" + s.getFoundationYear());
+            System.out.println(s.getDescription());
+            for (int i = 0; i < products.size(); i++) {
+                ShopProduct sp = products.get(i);
+                System.out.println("\t" + (i + 1) + ") " + sp.getProductName() + " by " + sp.getBrand());
+                System.out.println("\t\t\t - " + sp.getProductPrice());
             }
+            System.out.println();
+            System.out.println("\t" + (products.size() + 1) + ")" + "Back\n");
         }
-        return -1;
     }
 }

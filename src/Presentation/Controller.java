@@ -3,13 +3,16 @@ package Presentation;
 import Bussines.Product.Product;
 import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
+import Bussines.Review;
 import Bussines.Shop;
 import Bussines.ShopManager;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Controller {
 
     private final UI ui;
@@ -54,21 +57,20 @@ public class Controller {
             case 1:
                 //Manage products.
                  choose = ui.showProductsMenu();
-                 productsLoop(choose);
+                 productInteraction(choose);
                 break;
             case 2:
                 // Manage shops
                 choose = ui.showShopsMenu();
-                shopsLoop(choose);
+                shopInteraction(choose);
                 break;
             case 3:
                 //Search products
-                String productName = ui.askForString("Enter your query: ");
-
+                searchProducts();
                 break;
             case 4:
                 // List shops
-
+                listShops();
                 break;
             case 5:
                 // Your cart.
@@ -83,28 +85,8 @@ public class Controller {
         }
     }
 
-    // New function
-    private void productsLoop(int choose) {
-        switch (choose) {
-            case 1:
-                ui.showMessage("");
-                createProduct();
-                break;
-            case 2:
-                ui.showMessage("");
-                removeProduct();
-                break;
-            case 3:
-                //Back
-                break;
-            default:
-                ui.showMessage("Invalid option.");
-                break;
-        }
-    }
-
-    // New function
-    private void shopsLoop(int choose) {
+    //MENUS INTERACTION
+    private void shopInteraction(int choose) {
 
         switch (choose) {
             case 1:
@@ -130,105 +112,78 @@ public class Controller {
                 break;
         }
     }
+    private void searchProductInteraction(int choose, Product p) {
 
-    //FULLY DONE
-    private void createProduct() {
-        String name = ui.askForString("Please enter the product’s name: ");
-        String brand = ui.askForString("Please enter the product’s brand: ");
-        double maxPrice = ui.askForDouble("Please enter the product’s maximum retail price: ");
-        ProductCategory category = giveProductCategory();
-        shopManager.createProduct(name, brand, maxPrice, category);
-        ui.showMessage("The product " + "'"+name+"'" + " by " + "'"+brand+"'" + " was added to the system.\n");
-    }
-
-    //new Function
-    private ProductCategory giveProductCategory() {
-        String userInput;
-
-        boolean isValid = false;
-        ui.showMessage("");
-        ui.giveProductCategory();
-        do {
-            userInput = ui.askForString("Please pick the shop’s business model: ").toUpperCase();
-
-            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
-                isValid = true;
-            } else {
-                ui.showMessage("Please enter a valid option (A, B, or C).");
-            }
-        } while (!isValid);
-
-        return switch (userInput) {
-            case "A" -> ProductCategory.GENERAL;
-            case "B" -> ProductCategory.REDUCED_TAXES;
-            case "C" -> ProductCategory.SUPER_REDUCED_TAXES;
-            default -> ProductCategory.valueOf("Invalid option");
-        };
-    }
-
-    //FULLY DONE
-    private void removeProduct() {
-
-        List<Product> list = new ArrayList<>();
-        list = shopManager.getAllProducts();
-        int index = ui.showProductList(list);
-        if (index > list.size()) {
-            //back
-            return;
-        }
-
-        else {
-            Product p = list.get(index - 1);
-            int option = ui.askForConfirmation(p.getProductName(), p.getProductBrand());
-
-            if(option == 1) {
-                shopManager.removeProduct(p.getProductName());
-                ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " has been withdrawn from sale.\n");
-            }
-            else {
-                ui.showMessage("Operation Canceled\n");
-            }
+        switch (choose) {
+            case 1:
+                ui.showMessage("");
+                readReviews(p);
+                break;
+            case 2:
+                ui.showMessage("");
+                makeReviews(p);
+                break;
+            case 3:
+                //Back
+                break;
+            default:
+                ui.showMessage("Invalid option.");
+                break;
         }
     }
+    private void productInteraction(int choose) {
+        switch (choose) {
+            case 1:
+                ui.showMessage("");
+                createProduct();
+                break;
+            case 2:
+                ui.showMessage("");
+                removeProduct();
+                break;
+            case 3:
+                //Back
+                break;
+            default:
+                ui.showMessage("Invalid option.");
+                break;
+        }
+    }
+    private void listShopsInteraction(int choose, Product p) {
 
-    // New function
-    private String giveShopModel() {
-        String userInput;
-        boolean isValid = false;
-        ui.showMessage("");
-        ui.giveBusinessModel();
-        do {
-            userInput = ui.askForString("Please pick the shop’s business model: ").toUpperCase();
-
-            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
-                isValid = true;
-            } else {
-                ui.showMessage("Please enter a valid option (A, B, or C).");
-            }
-        } while (!isValid);
-
-        return switch (userInput) {
-            case "A" -> "Maximum Benefits";
-            case "B" -> "Loyalty";
-            case "C" -> "Sponsored";
-            default -> "Invalid Option";
-        };
-
+        switch (choose) {
+            case 1:
+                ui.showMessage("");
+                readReviews(p);
+                break;
+            case 2:
+                ui.showMessage("");
+                makeReviews(p);
+                break;
+            case 3:
+                ui.showMessage("");
+                //addToCart();
+                break;
+            case 4:
+                //Back
+                break;
+            default:
+                ui.showMessage("Invalid option.");
+                break;
+        }
     }
 
-    //Falta arreglar que pasa cuando el catalogo es null
+    //SHOPS
     private void createShop() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String description = ui.askForString("Please enter the shop's description: ");
         int foundingYear = ui.askForInteger("Please enter the shop's founding year: ");
-        String businessModel = giveShopModel();
+        String businessModel = ui.askForShopModel();
 
         Shop s = new Shop(shopName,description,foundingYear, 0,businessModel,null);
         shopManager.createShop(s);
         ui.showMessage("'" + shopName + "'"  + " is now a part of the elCofre family.\n");
     }
-
-    // FULLY DONE
     private void expandCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String productName = ui.askForString("Please enter the product's name: ");
@@ -248,49 +203,146 @@ public class Controller {
         }
 
     }
-
-    //FULLY DONE
     private void reduceCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
-        List<ShopProduct> list = shopManager.getAllProductsFromShop(shopName);
         ui.showMessage("This shop sells the following products:");
-        int index = ui.showProductsInShop(list);
-
-        if (index > list.size()) {
-            //back
+        List<String> shopProductsNames = shopManager.getAllProductsNameFromShop(shopName);
+        if (shopProductsNames.isEmpty()) {
+            ui.showMessage("This shop doesn't exists.");
             return;
         }
-
-        else {
-            ShopProduct p = list.get(index - 1);
-            shopManager.reduceCatalog(shopName,p.getProductName());
-            ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getProductBrand()+"'" + " is no longer being sold at " + shopName);
+        int index = ui.showListAndGetChoice(shopProductsNames, "Which one would you like to remove? ");
+        if (ui.isValidIndex(index, shopProductsNames.size() - 1)) {
+            String productName = shopProductsNames.get(index - 1);
+            shopManager.reduceCatalog(shopName, productName);
+            ui.showMessage("\"" + productName + "\"" + " is no longer being sold at " + "\"" + shopName + "\".\n");
 
         }
+    }
+    private void listShops() {
+        List<String> shopNames = shopManager.getAllNameShops();
 
+        int choose = ui.showListAndGetChoice(shopNames, "Which catalogue do you want to see? ");
+        if (ui.isValidIndex(choose, shopNames.size() - 1) && !shopNames.isEmpty())  {
+            Shop s = shopManager.getShop(shopNames.get(choose - 1));
+            List<ShopProduct> products = shopManager.getAllProductsFromShop(s.getName());
+            ui.showShopCatalogue(s, products);
+            int element = ui.askForInteger("Which one are you interested in? ");
+
+            if (ui.isValidIndex(element, products.size() - 1)){
+                ShopProduct sp = products.get(element - 1);
+                int selected = ui.showCatalogMenu("Choose an option: ");
+                listShopsInteraction(selected, sp);
+            }
+        }
     }
 
-    private void addToCard() {
+    //PRODUCTS
+    private void createProduct() {
+        String name = ui.askForString("Please enter the product’s name: ");
+        String brand = ui.askForString("Please enter the product’s brand: ");
+        double maxPrice = ui.askForDouble("Please enter the product’s maximum retail price: ");
+        ProductCategory category = ui.askForProductCategory();
+        shopManager.createProduct(name, brand, maxPrice, category);
+        ui.showMessage("The product " + "\"" + name + "\"" + " by \"" + brand + "\" was added to the system.\n");
+    }
+    private void removeProduct() {
+        List<Product> products = shopManager.getAllProducts();
+        List<String> productData = new ArrayList<>();
+        products.forEach(p -> productData.add("\"" +p.getProductName() + "\" by \"" + p.getProductBrand() + "\""));
 
+        if (products.isEmpty()) {
+            ui.showMessage("There are no products available.");
+            return;
+        } else {
+            ui.showMessage("These are the currently available products: ");
+        }
+
+        int index = ui.showListAndGetChoice(productData, "Which product would you like to remove? ");
+
+        if (ui.isValidIndex(index, productData.size() - 1)) {
+            Product p = products.get(index - 1);
+            if (ui.askForConfirmation(p.getProductName(), p.getProductBrand())) {
+                shopManager.removeProduct(p.getProductName());
+                ui.showMessage("\"" + p.getProductName() + "\"" + " by " + "\"" + p.getProductBrand()+ "\"" + " has been withdrawn from sale.\n");
+            } else {
+                removeProduct();
+            }
+        }
+    }
+    private void searchProducts() {
+        String productName = ui.askForString("Enter your query: ");
+        LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = getDictionaryWithProductAndShopsWhereExistsWithPrice(productName);
+        if (products != null) {
+            ui.showProductSearched(products);
+            int choose = ui.askForInteger("Which one would you like to review?");
+
+            if (ui.isValidIndex(choose, products.size() - 1)) {
+                int selected = ui.showReviewMenu("Choose an option: ");
+                Product p = (Product) products.keySet().toArray()[choose - 1];
+                searchProductInteraction(selected, p);
+            }
+        } else {
+            ui.showMessage("No products found.");
+        }
+    }
+    private LinkedHashMap<Product, LinkedHashMap<Shop, Double>> getDictionaryWithProductAndShopsWhereExistsWithPrice(String productName) {
+        LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = new LinkedHashMap<>();
+        List<Product> productsFound = shopManager.searchProductsByQuery(productName);
+        if (productsFound.isEmpty()) {
+            return null;
+        } else {
+            for (Product p : productsFound) {
+                List<Shop> shops = shopManager.getShopsWhereProductExistsInCatalog(p.getProductName());
+                LinkedHashMap<Shop, Double> shopsWithPrice = new LinkedHashMap<>();
+                for (Shop s : shops) {
+                    ShopProduct sp = shopManager.getProductFromShop(s.getName(), p.getProductName());
+                    shopsWithPrice.put(s, sp.getProductPrice());
+                }
+                products.put(p, shopsWithPrice);
+            }
+            return products;
+        }
     }
 
-    private void clearCard() {
+    //CART
+    private void addToCart() {
 
     }
+    private void clearCart() {
 
+    }
     private void checkout() {
 
     }
 
-    private void readReviews() {
+    //REVIEWS
+    private void readReviews(Product p) {
         // List reviews from product selected.
+        List<Review> reviews = shopManager.readReviews(p.getProductName());
+        if (reviews.isEmpty()) {
+            ui.showMessage("There are no reviews for this product yet.");
+        } else {
+            ui.showMessage("These are the reviews for \"" + p.getProductName() + "\" by \"" + p.getProductBrand() + "\":");
+            float sum = 0;
+            for (Review r : reviews) {
+                sum += r.getStars();
+                ui.showMessage("\t" + r.getStars() + "* " + r.getCommentary());
+            }
+            ui.showMessage("Average rating: " + (sum/reviews.size()) + "\n");
+        }
+    }
+    private void makeReviews(Product p) {
+        // Make a review for the product selected.
+        String stars = ui.askForString("Please rate the product (1-5 stars): ");
+        String commentary = ui.askForString("Please add a comment to your review: ");
+        Review review = new Review(stars, commentary);
+        shopManager.makeReview(p.getProductName(), review);
 
+        ui.showMessage("Thank you for your review of \"" + p.getProductName() + "\" by \"" + p.getProductBrand() + "\"");
     }
 
-    private void makeReviews() {
-
-    }
-
+    //EXIT
     private void exit() {
         ui.showMessage("We hope to see you again!");
     }

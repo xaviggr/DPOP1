@@ -42,4 +42,13 @@ public class Catalog {
     public void addProduct(ShopProduct shopProduct) {
         shopProducts.add(shopProduct);
     }
+
+    public boolean productExists(String productName) {
+        for (ShopProduct shopProduct: shopProducts) {
+            if (shopProduct.getProductName().equals(productName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

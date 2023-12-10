@@ -1,5 +1,7 @@
 package Bussines;
 
+import java.util.ArrayList;
+
 public class Shop {
 
     public String getName() {
@@ -42,6 +44,10 @@ public class Shop {
         this.foundationYear = foundationYear;
         this.businessModel = businessModel;
         this.earnings = earnings;
-        this.catalog = catalog;
+        if (catalog == null) {
+            this.catalog = new Catalog(new ArrayList<>());
+        } else {
+            this.catalog = catalog;
+        }
     }
 }

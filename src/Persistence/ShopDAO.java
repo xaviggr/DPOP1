@@ -44,24 +44,24 @@ public class ShopDAO extends DAOJSON {
         return shopsList;
     }
 
-    public List<Shop> getShopsWhereProductExistsInCatalog(ShopProduct shopProduct) {
-        List<Shop> shopsList = getShops();
-        List<Shop> shopsWhereProductExists = new ArrayList<>();
+    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) {
+        List<Shop> shops = getShops();
+        List<Shop> shopsWithProduct = new ArrayList<>();
 
-        for (Shop currentShop: shopsList) {
-            if (currentShop.getCatalog().getProducts().contains(shopProduct)) {
-                shopsWhereProductExists.add(currentShop);
+        for (Shop shop : shops) {
+            if (shop.getCatalog().productExists(productName)) {
+                shopsWithProduct.add(shop);
             }
         }
 
-        return shopsWhereProductExists;
+        return shopsWithProduct;
     }
 
     public List<ShopProduct> getProductsFromShop(String shopName) {
         return getShop(shopName).getCatalog().getProducts();
     }
 
-    public Product getProductFromShop(String shopName, String productName) {
+    public ShopProduct getProductFromShop(String shopName, String productName) {
         List<ShopProduct> products = getProductsFromShop(shopName);
 
         for (ShopProduct currentProduct: products) {
@@ -122,6 +122,12 @@ public class ShopDAO extends DAOJSON {
         return null;
     }
 
+    public boolean addShop(Shop shop) {
+        List<Shop> shops = getShops();
+        shops.add(shop);
+        return saveShopsToFile(shops);
+    }
+
     private Shop createShopFromJsonObject(JsonObject shopObject) {
         String name = shopObject.get("name").getAsString();
         String description = shopObject.get("description").getAsString();
@@ -157,6 +163,7 @@ public class ShopDAO extends DAOJSON {
             shopObject.addProperty("businessModel", shop.getBusinessModel());
 
             JsonArray shopProducts = new JsonArray();
+
             for (ShopProduct shopProduct : shop.getCatalog().getProducts()) {
                 JsonObject productObject = new JsonObject();
                 productObject.addProperty("name", shopProduct.getProductName());
@@ -173,9 +180,29 @@ public class ShopDAO extends DAOJSON {
         return saveToFile(jsonArray);
     }
 
-    public boolean addShop(Shop shop) {
+    public void removeProductFromShops(String nameProduct) {
         List<Shop> shops = getShops();
-        shops.add(shop);
-        return saveShopsToFile(shops);
+        for (Shop shop : shops) {
+            shop.getCatalog().removeProduct(nameProduct);
+        }
+        saveShopsToFile(shops);
+    }
+
+    public List<String> getAllNameShops() {
+        List<Shop> shops = getShops();
+        List<String> names = new ArrayList<>();
+        for (Shop shop : shops) {
+            names.add(shop.getName());
+        }
+        return names;
+    }
+
+    public List<String> getAllProductsNameFromShop(String shopName) {
+        List<ShopProduct> products = getProductsFromShop(shopName);
+        List<String> names = new ArrayList<>();
+        for (ShopProduct product : products) {
+            names.add(product.getProductName());
+        }
+        return names;
     }
 }

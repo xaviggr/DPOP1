@@ -46,7 +46,8 @@ public class ProductDAO extends DAOJSON {
         JsonArray reviewsArray = productObject.get("reviews").getAsJsonArray();
         for (JsonElement reviewElement : reviewsArray) {
             JsonObject reviewObject = reviewElement.getAsJsonObject();
-            String stars = reviewObject.get("stars").toString();
+            String stars = "*".repeat(Math.max(0, reviewObject.get("stars").getAsInt()));
+
             String commentary = reviewObject.get("commentary").getAsString();
             Review review = new Review(stars, commentary);
             product.addReview(review);
@@ -60,6 +61,23 @@ public class ProductDAO extends DAOJSON {
         JsonObject newProduct = productToJson(product);
         products.add(newProduct);
         return saveToFile(products);
+    }
+
+    public boolean updateProduct(Product product) {
+        JsonArray products = readAllFromFile();
+
+        for (JsonElement productElement : products) {
+            JsonObject productObject = productElement.getAsJsonObject();
+            if (productObject.get("name").getAsString().equals(product.getProductName())) {
+                productObject.addProperty("brand", product.getBrand());
+                productObject.addProperty("mrp", product.getMaxPrice());
+                productObject.addProperty("category", product.getCategory().toString());
+                productObject.add("reviews", reviewsToJsonArray(product.getReviews()));
+                return saveToFile(products);
+            }
+        }
+
+        return false;
     }
 
     public boolean removeProduct(String productName) {
@@ -86,6 +104,26 @@ public class ProductDAO extends DAOJSON {
             }
         }
         return null;
+    }
+
+    public List<Product> findProductsByQuery(String query) {
+        JsonArray products = readAllFromFile();
+        List<Product> productList = new ArrayList<>();
+
+        for (JsonElement productElement : products) {
+            JsonObject productObject = productElement.getAsJsonObject();
+            String productName = productObject.get("name").getAsString();
+            String brand = productObject.get("brand").getAsString();
+
+            if (productName.toLowerCase().contains(query.toLowerCase())) {
+                productList.add(jsonToProduct(productObject));
+            }
+            else if (brand.equals(query)) {
+                productList.add(jsonToProduct(productObject));
+            }
+        }
+
+        return productList;
     }
 
     //Nuevo
