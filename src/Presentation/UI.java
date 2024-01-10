@@ -84,6 +84,30 @@ public class UI {
         }
     }
     /**
+     * Solicita al usuario un número decimal positibvo (double).
+     *
+     * @param message El mensaje que se muestra al usuario.
+     * @return El número decimal ingresado por el usuario.
+     */
+    public double askForPositiveDouble(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                double number = scanner.nextDouble();
+                if (number > 0) {
+                    return number;
+                } else {
+                    System.out.println("Please enter a positive number.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("This isn't a double!");
+            } finally {
+                // Consume the newline character to clear the buffer
+                scanner.nextLine();
+            }
+        }
+    }
+    /**
      * Solicita al usuario confirmación (Sí/No).
      *
      * @param message El mensaje que se muestra al usuario.

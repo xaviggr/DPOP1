@@ -21,7 +21,7 @@ public class ProductDAO extends DAOJSON {
      * Constructor que establece la ruta del archivo JSON asociado a los productos.
      */
     public ProductDAO() {
-        this.path = "products.json";
+        this.path += "products.json";
     }
 
     /**

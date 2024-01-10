@@ -333,8 +333,12 @@ public class Controller {
     private void createProduct() {
         String name = ui.askForString("Please enter the product’s name: ");
         String brand = ui.askForString("Please enter the product’s brand: ");
-        double maxPrice = ui.askForDouble("Please enter the product’s maximum retail price: ");
+        double maxPrice = ui.askForPositiveDouble("Please enter the product’s maximum retail price: ");
         ProductCategory category = ui.askForProductCategory();
+        if(shopManager.findProduct(name) != null) {
+            ui.showMessage("Error. That product already exists.\n");
+            return;
+        }
         shopManager.createProduct(name, brand, maxPrice, category);
         ui.showMessage("The product " + "\"" + name + "\"" + " by \"" + brand + "\" was added to the system.\n");
     }

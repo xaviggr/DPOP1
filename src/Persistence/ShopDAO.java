@@ -27,7 +27,7 @@ public class ShopDAO extends DAOJSON {
      * Verifica si el archivo existe y lo crea si no.
      */
     public ShopDAO() {
-        this.path = "shops.json";
+        this.path += "shops.json";
         try {
             checkIfFileExists();
         } catch (FileNotFoundException e) {

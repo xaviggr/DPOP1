@@ -26,7 +26,7 @@ public class Main {
         ShopCart shopCart = new ShopCart();
 
         // Initialization of the API helper
-        ApiHelper apiHelper = new ApiHelper();
+        //ApiHelper apiHelper = new ApiHelper();
 
         // Creation and configuration of the controller
         Controller controller = new Controller(ui, shopManager, shopCart);

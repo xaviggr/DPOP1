@@ -15,11 +15,7 @@ public abstract class DAOJSON {
     /**
      * Ruta del archivo JSON en el sistema de archivos o en el classpath.
      */
-    protected String path;
-    /**
-     * URL del recurso JSON en el classpath.
-     */
-    protected URL resource;
+    protected String path = "data/";
 
     /**
      * Verifica si el archivo JSON especificado existe en el classpath.
@@ -27,12 +23,7 @@ public abstract class DAOJSON {
      * @throws FileNotFoundException Si el archivo no existe.
      */
     public void checkIfFileExists() throws FileNotFoundException {
-        resource = ClassLoader.getSystemClassLoader().getResource(path);
-
-        if (resource == null) {
-            throw new FileNotFoundException("File " + path + " not exists.");
-        }
-        File file = new File(resource.getPath());
+        File file = new File(path);
         if (!file.exists()) {
             throw new FileNotFoundException("File " + path + " not exists.");
         }
@@ -44,7 +35,7 @@ public abstract class DAOJSON {
      * @throws IOException Si ocurre un error durante la creación del archivo.
      */
     public void createFile() throws IOException {
-        try (FileWriter fileWriter = new FileWriter("data/" + path)) {
+        try (FileWriter fileWriter = new FileWriter(new File(path))) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             fileWriter.write(gson.toJson(new JsonArray()));
         }
@@ -56,10 +47,8 @@ public abstract class DAOJSON {
      * @return Un JsonArray que contiene todos los elementos leídos.
      */
     protected JsonArray readAllFromFile() {
-        resource = ClassLoader.getSystemClassLoader().getResource(path);
-        assert resource != null;
         try {
-            FileReader fr = new FileReader(resource.getFile());
+            FileReader fr = new FileReader(path);
             JsonElement element = JsonParser.parseReader(fr);
             if (element.isJsonNull())
                 return new JsonArray();
@@ -76,7 +65,7 @@ public abstract class DAOJSON {
      * @return true si la operación fue exitosa, false si hubo algún error.
      */
     protected boolean saveToFile(JsonArray products) {
-        try (FileWriter fileWriter = new FileWriter(resource.getFile())) {
+        try (FileWriter fileWriter = new FileWriter(path)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             fileWriter.write(gson.toJson(products));
             return true;
