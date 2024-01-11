@@ -7,6 +7,7 @@ import Bussines.Review;
 import Bussines.Shop;
 import Bussines.ShopCart;
 import Bussines.ShopManager;
+import Persistence.exception.PersistenceJsonException;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -257,11 +258,16 @@ public class Controller {
     private void createShop() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String description = ui.askForString("Please enter the shop's description: ");
-        int foundingYear = ui.askForInteger("Please enter the shop's founding year: ");
+        int foundingYear = ui.askForPositiveInteger("Please enter the shop's founding year: ");
         String businessModel = ui.askForShopModel();
 
         Shop s = new Shop(shopName,description,foundingYear, 0,businessModel,null);
-        shopManager.createShop(s);
+        try {
+            shopManager.createShop(s);
+        } catch (PersistenceJsonException e) {
+            //Mensaje de error
+            throw new RuntimeException(e);
+        }
         ui.showMessage("'" + shopName + "'"  + " is now a part of the elCofre family.\n");
     }
     /**
@@ -270,59 +276,87 @@ public class Controller {
     private void expandCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String productName = ui.askForString("Please enter the product's name: ");
-        double price = ui.askForDouble("Please enter the product's price at this shop: ");
-        Product p = shopManager.findProduct(productName);
-        Shop s = shopManager.findShopByName(shopName);
-        if (p == null || s == null) {
-            if(p == null) {
-                ui.showMessage("Error. That product doesn't exist.\n");
-            } else {
-                ui.showMessage("Error. That shop doesn't exist.\n");
-            }
-        } else {
-            ShopProduct sp = new ShopProduct(p.getProductName(),p.getBrand(),p.getMaxPrice(),p.getCategory(),price);
-            shopManager.expandCatalog(shopName, sp);
-            ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getBrand()+"'" + " is now being sold at " + "'"+shopName+"'"+".\n");
-        }
+        double price = ui.askForPositiveInteger("Please enter the product's price at this shop: ");
 
+        Product p;
+        Shop s;
+
+        try {
+            p = shopManager.findProduct(productName);
+            s = shopManager.findShopByName(shopName);
+
+            if (p == null || s == null) {
+                if(p == null) {
+                    ui.showMessage("Error. That product doesn't exist.\n");
+                } else {
+                    ui.showMessage("Error. That shop doesn't exist.\n");
+                }
+            } else {
+                if (p.getMaxPrice() < price) {
+                    ui.showMessage("Error. The price is higher than the maximum retail price.\n");
+                    return;
+                }
+                ShopProduct sp = new ShopProduct(p.getProductName(),p.getBrand(),p.getMaxPrice(),p.getCategory(),price);
+                shopManager.expandCatalog(shopName, sp);
+                ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getBrand()+"'" + " is now being sold at " + "'"+shopName+"'"+".\n");
+            }
+
+        } catch (PersistenceJsonException e) {
+            //Mensaje de error
+            throw new RuntimeException(e);
+        }
     }
     /**
      * Realiza la interacción relacionada con la reducción del catálogo de una tienda.
      */
     private void reduceCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
-        ui.showMessage("This shop sells the following products:");
-        List<String> shopProductsNames = shopManager.getAllProductsNameFromShop(shopName);
-        if (shopProductsNames.isEmpty()) {
-            ui.showMessage("This shop doesn't exists.");
-            return;
-        }
-        int index = ui.showListAndGetChoice(shopProductsNames, "Which one would you like to remove? ");
-        if (ui.isValidIndex(index, shopProductsNames.size() - 1)) {
-            String productName = shopProductsNames.get(index - 1);
-            shopManager.reduceCatalog(shopName, productName);
-            ui.showMessage("\"" + productName + "\"" + " is no longer being sold at " + "\"" + shopName + "\".\n");
+        Shop s;
+        try {
+            s = shopManager.findShopByName(shopName);
 
+            if (s == null) {
+                ui.showMessage("This shop doesn't exists.");
+                return;
+            }
+
+            List<String> shopProductsNames = shopManager.getAllProductsNameFromShop(shopName);
+            ui.showMessage("This shop sells the following products:");
+            int index = ui.showListAndGetChoice(shopProductsNames, "Which one would you like to remove? ");
+            if (ui.isValidIndex(index, shopProductsNames.size() - 1)) {
+                String productName = shopProductsNames.get(index - 1);
+                shopManager.reduceCatalog(shopName, productName);
+                ui.showMessage("\"" + productName + "\"" + " is no longer being sold at " + "\"" + shopName + "\".\n");
+
+            }
+
+        } catch (PersistenceJsonException e) {
+            throw new RuntimeException(e);
         }
     }
     /**
      * Realiza la interacción relacionada con la lista de tiendas.
      */
     private void listShops() {
-        List<String> shopNames = shopManager.getAllNameShops();
+        List<String> shopNames;
+        try {
+            shopNames = shopManager.getAllNameShops();
+            int choose = ui.showListAndGetChoice(shopNames, "Which catalogue do you want to see? ");
+            if (ui.isValidIndex(choose, shopNames.size() - 1) && !shopNames.isEmpty())  {
+                Shop s = shopManager.getShop(shopNames.get(choose - 1));
+                List<ShopProduct> products = shopManager.getAllProductsFromShop(s.getName());
+                ui.showShopCatalogue(s, products);
+                int element = ui.askForInteger("Which one are you interested in? ");
 
-        int choose = ui.showListAndGetChoice(shopNames, "Which catalogue do you want to see? ");
-        if (ui.isValidIndex(choose, shopNames.size() - 1) && !shopNames.isEmpty())  {
-            Shop s = shopManager.getShop(shopNames.get(choose - 1));
-            List<ShopProduct> products = shopManager.getAllProductsFromShop(s.getName());
-            ui.showShopCatalogue(s, products);
-            int element = ui.askForInteger("Which one are you interested in? ");
-
-            if (ui.isValidIndex(element, products.size() - 1)){
-                ShopProduct sp = products.get(element - 1);
-                int selected = ui.showCatalogMenu("Choose an option: ");
-                listShopsInteraction(selected, sp);
+                if (ui.isValidIndex(element, products.size() - 1)){
+                    ShopProduct sp = products.get(element - 1);
+                    int selected = ui.showCatalogMenu("Choose an option: ");
+                    listShopsInteraction(selected, sp);
+                }
             }
+
+        } catch (PersistenceJsonException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -334,39 +368,52 @@ public class Controller {
         String name = ui.askForString("Please enter the product’s name: ");
         String brand = ui.askForString("Please enter the product’s brand: ");
         double maxPrice = ui.askForPositiveDouble("Please enter the product’s maximum retail price: ");
-        ProductCategory category = ui.askForProductCategory();
-        if(shopManager.findProduct(name) != null) {
-            ui.showMessage("Error. That product already exists.\n");
-            return;
+        ProductCategory category = askForProductCategory();
+
+        try {
+            if(shopManager.findProduct(name) != null) {
+                ui.showMessage("Error. That product already exists.\n");
+                return;
+            }
+            shopManager.createProduct(name, brand, maxPrice, category);
+            ui.showMessage("The product " + "\"" + name + "\"" + " by \"" + brand + "\" was added to the system.\n");
+
+        } catch (PersistenceJsonException e) {
+            //Mensaje de error
+            throw new RuntimeException(e);
         }
-        shopManager.createProduct(name, brand, maxPrice, category);
-        ui.showMessage("The product " + "\"" + name + "\"" + " by \"" + brand + "\" was added to the system.\n");
     }
     /**
      * Realiza la interacción relacionada con la eliminación de un producto.
      */
     private void removeProduct() {
-        List<Product> products = shopManager.getAllProducts();
-        List<String> productData = new ArrayList<>();
-        products.forEach(p -> productData.add("\"" +p.getProductName() + "\" by \"" + p.getBrand() + "\""));
+        List<Product> products;
+        try {
+            products = shopManager.getAllProducts();
+            List<String> productData = new ArrayList<>();
+            products.forEach(p -> productData.add("\"" +p.getProductName() + "\" by \"" + p.getBrand() + "\""));
 
-        if (products.isEmpty()) {
-            ui.showMessage("There are no products available.");
-            return;
-        } else {
-            ui.showMessage("These are the currently available products: ");
-        }
-
-        int index = ui.showListAndGetChoice(productData, "Which product would you like to remove? ");
-
-        if (ui.isValidIndex(index, productData.size() - 1)) {
-            Product p = products.get(index - 1);
-            if (ui.askForConfirmation("Are you sure you want to remove \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"?")) {
-                shopManager.removeProduct(p.getProductName());
-                ui.showMessage("\"" + p.getProductName() + "\"" + " by " + "\"" + p.getBrand()+ "\"" + " has been withdrawn from sale.\n");
+            if (products.isEmpty()) {
+                ui.showMessage("There are no products available.");
+                return;
             } else {
-                removeProduct();
+                ui.showMessage("These are the currently available products: ");
             }
+
+            int index = ui.showListAndGetChoice(productData, "Which product would you like to remove? ");
+
+            if (ui.isValidIndex(index, productData.size() - 1)) {
+                Product p = products.get(index - 1);
+                if (ui.askForConfirmation("Are you sure you want to remove \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"?")) {
+                    shopManager.removeProduct(p.getProductName());
+                    ui.showMessage("\"" + p.getProductName() + "\"" + " by " + "\"" + p.getBrand()+ "\"" + " has been withdrawn from sale.\n");
+                } else {
+                    removeProduct();
+                }
+            }
+        } catch (PersistenceJsonException e) {
+            //Mostrar mensaje error
+            throw new RuntimeException(e);
         }
     }
     /**
@@ -400,20 +447,27 @@ public class Controller {
      */
     private LinkedHashMap<Product, LinkedHashMap<Shop, Double>> getDictionaryWithProductAndShopsWhereExistsWithPrice(String productName) {
         LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = new LinkedHashMap<>();
-        List<Product> productsFound = shopManager.searchProductsByQuery(productName);
-        if (productsFound.isEmpty()) {
-            return null;
-        } else {
-            for (Product p : productsFound) {
-                List<Shop> shops = shopManager.getShopsWhereProductExistsInCatalog(p.getProductName());
-                LinkedHashMap<Shop, Double> shopsWithPrice = new LinkedHashMap<>();
-                for (Shop s : shops) {
-                    ShopProduct sp = shopManager.getProductFromShop(s.getName(), p.getProductName());
-                    shopsWithPrice.put(s, sp.getProductPrice());
+        List<Product> productsFound;
+        try {
+            productsFound = shopManager.searchProductsByQuery(productName);
+            if (productsFound.isEmpty()) {
+                return null;
+            } else {
+                for (Product p : productsFound) {
+                    List<Shop> shops = shopManager.getShopsWhereProductExistsInCatalog(p.getProductName());
+                    LinkedHashMap<Shop, Double> shopsWithPrice = new LinkedHashMap<>();
+                    for (Shop s : shops) {
+                        ShopProduct sp = shopManager.getProductFromShop(s.getName(), p.getProductName());
+                        shopsWithPrice.put(s, sp.getProductPrice());
+                    }
+                    products.put(p, shopsWithPrice);
                 }
-                products.put(p, shopsWithPrice);
+                return products;
             }
-            return products;
+
+        } catch (PersistenceJsonException e) {
+            //Mostrar mensaje error
+            throw new RuntimeException(e);
         }
     }
 
@@ -438,13 +492,18 @@ public class Controller {
         if (ui.askForConfirmation("Are you sure you want to checkout?")) {
 
             for (ShopProduct sp : shopCart.getProductList()) {
-                List<Shop> shops = shopManager.getShopsWhereProductExistsInCatalog(sp.getProductName());
-                for (Shop s : shops){
-                    if (shopManager.getProductFromShop(s.getName(), sp.getProductName()).getProductPrice() == sp.getProductPrice()) {
-                        ui.showMessage("\"" + s.getName() + "\" has earned " + sp.getProductPrice() + ", for an historic total of " + s.getEarnings() + ".\n");
-                        s.setEarnings(s.getEarnings() + sp.getProductPrice());
-                        shopManager.checkout(s);
+                List<Shop> shops;
+                try {
+                    shops = shopManager.getShopsWhereProductExistsInCatalog(sp.getProductName());
+                    for (Shop s : shops){
+                        if (shopManager.getProductFromShop(s.getName(), sp.getProductName()).getProductPrice() == sp.getProductPrice()) {
+                            ui.showMessage("\"" + s.getName() + "\" has earned " + sp.getProductPrice() + ", for an historic total of " + s.getEarnings() + ".\n");
+                            s.setEarnings(s.getEarnings() + sp.getProductPrice());
+                            shopManager.checkout(s);
+                        }
                     }
+                } catch (PersistenceJsonException e) {
+                    throw new RuntimeException(e);
                 }
             }
 
@@ -461,17 +520,24 @@ public class Controller {
      */
     private void readReviews(Product p) {
         // List reviews from product selected.
-        List<Review> reviews = shopManager.readReviews(p.getProductName());
-        if (reviews.isEmpty()) {
-            ui.showMessage("There are no reviews for this product yet.");
-        } else {
-            ui.showMessage("These are the reviews for \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\":");
-            float sum = 0;
-            for (Review r : reviews) {
-                sum += r.getStars();
-                ui.showMessage("\t" + r.getStars() + "* " + r.getCommentary());
+        List<Review> reviews;
+        try {
+            reviews = shopManager.readReviews(p.getProductName());
+            if (reviews.isEmpty()) {
+                ui.showMessage("There are no reviews for this product yet.");
+            } else {
+                ui.showMessage("These are the reviews for \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\":");
+                float sum = 0;
+                for (Review r : reviews) {
+                    sum += r.getStars();
+                    ui.showMessage("\t" + r.getStars() + "* " + r.getCommentary());
+                }
+                ui.showMessage("Average rating: " + (sum/reviews.size()) + "\n");
             }
-            ui.showMessage("Average rating: " + (sum/reviews.size()) + "\n");
+
+        } catch (PersistenceJsonException e) {
+            //Mostrar mensaje error
+            throw new RuntimeException(e);
         }
     }
     /**
@@ -484,9 +550,43 @@ public class Controller {
         String stars = ui.askForString("Please rate the product (1-5 stars): ");
         String commentary = ui.askForString("Please add a comment to your review: ");
         Review review = new Review(stars, commentary);
-        shopManager.makeReview(p.getProductName(), review);
+        try {
+            shopManager.makeReview(p.getProductName(), review);
+        } catch (PersistenceJsonException e) {
+            //Mostrar mensaje error
+            throw new RuntimeException(e);
+        }
 
         ui.showMessage("Thank you for your review of \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"");
+    }
+
+    /**
+     * Solicita al usuario la categoría de un producto.
+     *
+     * @return La categoría de producto seleccionada por el usuario.
+     */
+    public ProductCategory askForProductCategory() {
+        String userInput;
+
+        boolean isValid = false;
+        ui.showMessage("");
+        ui.giveProductCategory();
+        do {
+            userInput = ui.askForString("Please pick the shop’s business model: ").toUpperCase();
+
+            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
+                isValid = true;
+            } else {
+                ui.showMessage("Please enter a valid option (A, B, or C).");
+            }
+        } while (!isValid);
+
+        return switch (userInput) {
+            case "A" -> ProductCategory.GENERAL;
+            case "B" -> ProductCategory.REDUCED_TAXES;
+            case "C" -> ProductCategory.SUPER_REDUCED_TAXES;
+            default -> ProductCategory.valueOf("Invalid option");
+        };
     }
 
     //EXIT

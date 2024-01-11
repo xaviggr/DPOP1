@@ -2,6 +2,7 @@ package Persistence;
 import Bussines.Product.Product;
 import Bussines.Product.ProductCategory;
 import Bussines.Review;
+import Persistence.exception.PersistenceJsonException;
 import com.google.gson.*;
 
 import java.util.ArrayList;
@@ -85,25 +86,21 @@ public class ProductDAO extends DAOJSON {
     }
 
     /**
-     * Agrega un nuevo producto al archivo JSON.
      *
-     * @param product El producto a agregar.
-     * @return true si la operación fue exitosa, false si hubo algún error.
+     *
      */
-    public boolean addProduct(Product product) {
+    public void addProduct(Product product) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
         JsonObject newProduct = productToJson(product);
         products.add(newProduct);
-        return saveToFile(products);
+        saveToFile(products);
     }
 
     /**
-     * Actualiza la información de un producto existente en el archivo JSON.
      *
-     * @param product El producto con la información actualizada.
-     * @return true si la operación fue exitosa, false si el producto no existe.
+     *
      */
-    public boolean updateProduct(Product product) {
+    public void updateProduct(Product product) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
 
         for (JsonElement productElement : products) {
@@ -113,31 +110,27 @@ public class ProductDAO extends DAOJSON {
                 productObject.addProperty("mrp", product.getMaxPrice());
                 productObject.addProperty("category", product.getCategory().toString());
                 productObject.add("reviews", reviewsToJsonArray(product.getReviews()));
-                return saveToFile(products);
+                saveToFile(products);
+                return;
             }
         }
-
-        return false;
     }
 
     /**
-     * Elimina un producto del archivo JSON por su nombre.
      *
-     * @param productName El nombre del producto a eliminar.
-     * @return true si la operación fue exitosa, false si el producto no existe.
+     *
      */
-    public boolean removeProduct(String productName) {
+    public void removeProduct(String productName) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
 
         for (JsonElement productElement : products) {
             JsonObject productObject = productElement.getAsJsonObject();
             if (productObject.get("name").getAsString().equals(productName)) {
                 products.remove(productElement);
-                return saveToFile(products);
+                saveToFile(products);
+                return;
             }
         }
-
-        return false;
     }
 
     /**
@@ -146,7 +139,7 @@ public class ProductDAO extends DAOJSON {
      * @param productName El nombre del producto a buscar.
      * @return El objeto Product encontrado, o null si no se encontró ningún producto con ese nombre.
      */
-    public Product findProduct(String productName) {
+    public Product findProduct(String productName) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
 
         for (JsonElement productElement : products) {
@@ -164,7 +157,7 @@ public class ProductDAO extends DAOJSON {
      * @param query La consulta para buscar productos.
      * @return Una lista de productos que coinciden con la consulta.
      */
-    public List<Product> findProductsByQuery(String query) {
+    public List<Product> findProductsByQuery(String query) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
         List<Product> productList = new ArrayList<>();
 
@@ -189,7 +182,7 @@ public class ProductDAO extends DAOJSON {
      *
      * @return Una lista que contiene todos los productos.
      */
-    public List<Product> getAllProducts() {
+    public List<Product> getAllProducts() throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
         List<Product> productList = new ArrayList<>();
 

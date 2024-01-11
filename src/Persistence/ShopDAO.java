@@ -1,11 +1,13 @@
 package Persistence;
 
 import Bussines.Catalog;
-import Bussines.Product.Product;
 import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
 import Bussines.Shop;
-import com.google.gson.*;
+import Persistence.exception.PersistenceJsonException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,7 +47,7 @@ public class ShopDAO extends DAOJSON {
      * @param shopName El nombre de la tienda a buscar.
      * @return La tienda encontrada, o null si no se encontró ninguna tienda con ese nombre.
      */
-    public Shop getShop(String shopName) {
+    public Shop getShop(String shopName) throws PersistenceJsonException {
         List<Shop> shopsList = getShops();
         return findShopByName(shopsList, shopName);
     }
@@ -55,7 +57,7 @@ public class ShopDAO extends DAOJSON {
      *
      * @return Una lista de objetos Shop que representan todas las tiendas.
      */
-    public List<Shop> getShops() {
+    public List<Shop> getShops() throws PersistenceJsonException {
         JsonArray shops = readAllFromFile();
         List<Shop> shopsList = new ArrayList<>();
 
@@ -73,7 +75,7 @@ public class ShopDAO extends DAOJSON {
      * @param productName El nombre del producto a buscar en los catálogos de las tiendas.
      * @return Una lista de tiendas que tienen el producto en su catálogo.
      */
-    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) {
+    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceJsonException {
         List<Shop> shops = getShops();
         List<Shop> shopsWithProduct = new ArrayList<>();
 
@@ -92,7 +94,7 @@ public class ShopDAO extends DAOJSON {
      * @param shopName El nombre de la tienda.
      * @return Una lista de objetos ShopProduct que representan los productos de la tienda.
      */
-    public List<ShopProduct> getProductsFromShop(String shopName) {
+    public List<ShopProduct> getProductsFromShop(String shopName) throws PersistenceJsonException {
         return getShop(shopName).getCatalog().getProducts();
     }
 
@@ -104,7 +106,7 @@ public class ShopDAO extends DAOJSON {
      * @param productName    El nombre del producto.
      * @return El objeto ShopProduct encontrado, o null si no se encontró.
      */
-    public ShopProduct getProductFromShop(String shopName, String productName) {
+    public ShopProduct getProductFromShop(String shopName, String productName) throws PersistenceJsonException {
         List<ShopProduct> products = getProductsFromShop(shopName);
 
         for (ShopProduct currentProduct: products) {
@@ -121,18 +123,15 @@ public class ShopDAO extends DAOJSON {
      *
      * @param shopName     El nombre de la tienda.
      * @param shopProduct  El objeto ShopProduct que se va a agregar.
-     * @return true si la operación fue exitosa, false si la tienda no existe.
      */
-    public boolean addProductInShop(String shopName, ShopProduct shopProduct) {
+    public void addProductInShop(String shopName, ShopProduct shopProduct) throws PersistenceJsonException {
         List<Shop> shops = getShops();
         Shop shop = findShopByName(shops, shopName);
 
         if (shop != null) {
             shop.getCatalog().addProduct(shopProduct);
-            return saveShopsToFile(shops);
+            saveShopsToFile(shops);
         }
-
-        return false;
     }
 
     /**
@@ -140,20 +139,17 @@ public class ShopDAO extends DAOJSON {
      *
      * @param shopName     El nombre de la tienda.
      * @param shopProduct  El objeto ShopProduct con la información actualizada.
-     * @return true si la operación fue exitosa, false si la tienda o el producto no existen.
      */
-    public boolean updateProductFromShop(String shopName, ShopProduct shopProduct) {
+    public void updateProductFromShop(String shopName, ShopProduct shopProduct) throws PersistenceJsonException {
         List<Shop> shops = getShops();
         Shop shop = findShopByName(shops, shopName);
 
         if (shop != null) {
             Catalog catalog = shop.getCatalog();
             if (catalog.updateProduct(shopProduct)) {
-                return saveShopsToFile(shops);
+                saveShopsToFile(shops);
             }
         }
-
-        return false;
     }
 
     /**
@@ -161,20 +157,17 @@ public class ShopDAO extends DAOJSON {
      *
      * @param shopName        El nombre de la tienda.
      * @param shopProductName El nombre del producto a eliminar.
-     * @return true si la operación fue exitosa, false si la tienda o el producto no existen.
      */
-    public boolean removeProductFromShop(String shopName, String shopProductName) {
+    public void removeProductFromShop(String shopName, String shopProductName) throws PersistenceJsonException {
         List<Shop> shops = getShops();
         Shop shop = findShopByName(shops, shopName);
 
         if (shop != null) {
             Catalog catalog = shop.getCatalog();
             if (catalog.removeProduct(shopProductName)) {
-                return saveShopsToFile(shops);
+                saveShopsToFile(shops);
             }
         }
-
-        return false;
     }
 
     /**
@@ -197,12 +190,11 @@ public class ShopDAO extends DAOJSON {
      * Agrega una nueva tienda al archivo JSON.
      *
      * @param shop La tienda a agregar.
-     * @return true si la operación fue exitosa, false si hubo algún error.
      */
-    public boolean addShop(Shop shop) {
+    public void addShop(Shop shop) throws PersistenceJsonException {
         List<Shop> shops = getShops();
         shops.add(shop);
-        return saveShopsToFile(shops);
+        saveShopsToFile(shops);
     }
 
     /**
@@ -238,9 +230,8 @@ public class ShopDAO extends DAOJSON {
      * Guarda la información de todas las tiendas en el archivo JSON.
      *
      * @param shops La lista de tiendas a guardar.
-     * @return true si la operación fue exitosa, false si hubo algún error.
      */
-    private boolean saveShopsToFile(List<Shop> shops) {
+    private void saveShopsToFile(List<Shop> shops) throws PersistenceJsonException {
         JsonArray jsonArray = new JsonArray();
 
         for (Shop shop : shops) {
@@ -266,7 +257,7 @@ public class ShopDAO extends DAOJSON {
             shopObject.add("catalogue", shopProducts);
             jsonArray.add(shopObject);
         }
-        return saveToFile(jsonArray);
+        saveToFile(jsonArray);
     }
 
     /**
@@ -274,7 +265,7 @@ public class ShopDAO extends DAOJSON {
      *
      * @param nameProduct El nombre del producto a eliminar de todas las tiendas.
      */
-    public void removeProductFromShops(String nameProduct) {
+    public void removeProductFromShops(String nameProduct) throws PersistenceJsonException {
         List<Shop> shops = getShops();
         for (Shop shop : shops) {
             shop.getCatalog().removeProduct(nameProduct);
@@ -287,7 +278,7 @@ public class ShopDAO extends DAOJSON {
      *
      * @return Una lista de nombres de tiendas.
      */
-    public List<String> getAllNameShops() {
+    public List<String> getAllNameShops() throws PersistenceJsonException {
         List<Shop> shops = getShops();
         List<String> names = new ArrayList<>();
         for (Shop shop : shops) {
@@ -302,7 +293,7 @@ public class ShopDAO extends DAOJSON {
      * @param shopName El nombre de la tienda.
      * @return Una lista de nombres de productos de la tienda.
      */
-    public List<String> getAllProductsNameFromShop(String shopName) {
+    public List<String> getAllProductsNameFromShop(String shopName) throws PersistenceJsonException {
         List<ShopProduct> products = getProductsFromShop(shopName);
         List<String> names = new ArrayList<>();
         for (ShopProduct product : products) {
@@ -316,7 +307,7 @@ public class ShopDAO extends DAOJSON {
      *
      * @param shop La tienda con las ganancias actualizadas.
      */
-    public void updateShop(Shop shop) {
+    public void updateShop(Shop shop) throws PersistenceJsonException {
         List<Shop> shops = getShops();
         for (Shop currentShop : shops) {
             if (currentShop.getName().equals(shop.getName())) {

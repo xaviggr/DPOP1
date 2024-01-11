@@ -1,9 +1,11 @@
 package Persistence;
 
+import Persistence.exception.PersistenceJsonException;
+import Persistence.exception.ReadJsonException;
+import Persistence.exception.WriteJsonException;
 import com.google.gson.*;
 
 import java.io.*;
-import java.net.URL;
 
 /**
  * Clase abstracta que utiliza Gson para realizar operaciones de lectura y escritura de datos en formato JSON.
@@ -11,6 +13,7 @@ import java.net.URL;
  *
  * @see com.google.gson.Gson
  */
+@SuppressWarnings("SpellCheckingInspection")
 public abstract class DAOJSON {
     /**
      * Ruta del archivo JSON en el sistema de archivos o en el classpath.
@@ -32,12 +35,14 @@ public abstract class DAOJSON {
     /**
      * Crea un nuevo archivo JSON en el directorio "data/".
      *
-     * @throws IOException Si ocurre un error durante la creación del archivo.
+     * @throws PersistenceJsonException Si ocurre un error durante la creación del archivo.
      */
-    public void createFile() throws IOException {
-        try (FileWriter fileWriter = new FileWriter(new File(path))) {
+    public void createFile() throws PersistenceJsonException {
+        try (FileWriter fileWriter = new FileWriter(path)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             fileWriter.write(gson.toJson(new JsonArray()));
+        } catch (IOException exception) {
+            throw new WriteJsonException(path, exception);
         }
     }
 
@@ -46,7 +51,7 @@ public abstract class DAOJSON {
      *
      * @return Un JsonArray que contiene todos los elementos leídos.
      */
-    protected JsonArray readAllFromFile() {
+    protected JsonArray readAllFromFile() throws PersistenceJsonException {
         try {
             FileReader fr = new FileReader(path);
             JsonElement element = JsonParser.parseReader(fr);
@@ -54,7 +59,7 @@ public abstract class DAOJSON {
                 return new JsonArray();
             return element.getAsJsonArray();
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ReadJsonException(path, e);
         }
     }
 
@@ -62,15 +67,13 @@ public abstract class DAOJSON {
      * Guarda el JsonArray especificado en el archivo JSON.
      *
      * @param products El JsonArray a guardar en el archivo.
-     * @return true si la operación fue exitosa, false si hubo algún error.
      */
-    protected boolean saveToFile(JsonArray products) {
+    protected void saveToFile(JsonArray products) throws PersistenceJsonException {
         try (FileWriter fileWriter = new FileWriter(path)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             fileWriter.write(gson.toJson(products));
-            return true;
         } catch (IOException e) {
-            return false;
+            throw new WriteJsonException(path, e);
         }
     }
 }

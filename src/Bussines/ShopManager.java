@@ -5,6 +5,7 @@ import Bussines.Product.ShopProduct;
 import Persistence.ProductDAO;
 import Persistence.ShopDAO;
 import Bussines.Product.Product;
+import Persistence.exception.PersistenceJsonException;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Clase que gestiona las operaciones comerciales y de productos en la aplicación.
  */
+@SuppressWarnings("SpellCheckingInspection")
 public class ShopManager {
 
     private final ShopDAO shopDAO;
@@ -36,7 +38,7 @@ public class ShopManager {
      * @param maxPrice Precio máximo del producto.
      * @param category Categoría del producto.
      */
-    public void createProduct(String name, String brand, double maxPrice, ProductCategory category) {
+    public void createProduct(String name, String brand, double maxPrice, ProductCategory category) throws PersistenceJsonException {
         Product product = new Product(name, brand, maxPrice, category);
         productDAO.addProduct(product);
     }
@@ -46,7 +48,7 @@ public class ShopManager {
      *
      * @param nameProduct Nombre del producto a eliminar.
      */
-    public void removeProduct(String nameProduct) {
+    public void removeProduct(String nameProduct) throws PersistenceJsonException {
         productDAO.removeProduct(nameProduct);
         shopDAO.removeProductFromShops(nameProduct);
     }
@@ -56,7 +58,7 @@ public class ShopManager {
      *
      * @param shop Instancia de la tienda a crear.
      */
-    public void createShop(Shop shop) {
+    public void createShop(Shop shop) throws PersistenceJsonException {
         shopDAO.addShop(shop);
     }
 
@@ -66,7 +68,7 @@ public class ShopManager {
      * @param shopName Nombre de la tienda.
      * @param sp       Producto de la tienda a añadir al catálogo.
      */
-    public void expandCatalog(String shopName, ShopProduct sp) {
+    public void expandCatalog(String shopName, ShopProduct sp) throws PersistenceJsonException {
         shopDAO.addProductInShop(shopName,sp);
     }
 
@@ -76,7 +78,7 @@ public class ShopManager {
      * @param shopName    Nombre de la tienda.
      * @param productName Nombre del producto a eliminar del catálogo.
      */
-    public void reduceCatalog(String shopName, String productName) {
+    public void reduceCatalog(String shopName, String productName) throws PersistenceJsonException {
         shopDAO.removeProductFromShop(shopName,productName);
     }
 
@@ -86,7 +88,7 @@ public class ShopManager {
      * @param nameProduct Nombre del producto a buscar.
      * @return Instancia del producto encontrado.
      */
-    public Product findProduct(String nameProduct) {
+    public Product findProduct(String nameProduct) throws PersistenceJsonException {
         return  productDAO.findProduct(nameProduct);
     }
 
@@ -96,7 +98,7 @@ public class ShopManager {
      * @param query Consulta para buscar productos.
      * @return Lista de productos que coinciden con la consulta.
      */
-    public List<Product> searchProductsByQuery(String query) {
+    public List<Product> searchProductsByQuery(String query) throws PersistenceJsonException {
         return productDAO.findProductsByQuery(query);
     }
 
@@ -106,7 +108,7 @@ public class ShopManager {
      * @param nameProduct Nombre del producto.
      * @return Lista de revisiones del producto.
      */
-    public List<Review> readReviews(String nameProduct) {
+    public List<Review> readReviews(String nameProduct) throws PersistenceJsonException {
         return productDAO.findProduct(nameProduct).getReviews();
     }
 
@@ -116,7 +118,7 @@ public class ShopManager {
      * @param nameProduct Nombre del producto.
      * @param review      Revisión a añadir.
      */
-    public void makeReview(String nameProduct, Review review) {
+    public void makeReview(String nameProduct, Review review) throws PersistenceJsonException {
         Product product = productDAO.findProduct(nameProduct);
         product.addReview(review);
         productDAO.updateProduct(product);
@@ -136,7 +138,7 @@ public class ShopManager {
      *
      * @return Lista de todos los productos.
      */
-    public List<Product> getAllProducts() {
+    public List<Product> getAllProducts() throws PersistenceJsonException {
         return productDAO.getAllProducts();
     }
 
@@ -146,17 +148,8 @@ public class ShopManager {
      * @param shopName Nombre de la tienda.
      * @return Lista de productos de la tienda.
      */
-    public List<ShopProduct> getAllProductsFromShop(String shopName) {
+    public List<ShopProduct> getAllProductsFromShop(String shopName) throws PersistenceJsonException {
         return shopDAO.getProductsFromShop(shopName);
-    }
-
-    /**
-     * Obtiene la lista de todas las tiendas disponibles.
-     *
-     * @return Lista de todas las tiendas.
-     */
-    public List<Shop> getAllShops() {
-        return shopDAO.getShops();
     }
 
     /**
@@ -165,7 +158,7 @@ public class ShopManager {
      * @param shopName Nombre de la tienda a buscar.
      * @return Instancia de la tienda encontrada.
      */
-    public Shop findShopByName(String shopName) {
+    public Shop findShopByName(String shopName) throws PersistenceJsonException {
         List<Shop> list = shopDAO.getShops();
          return shopDAO.findShopByName(list,shopName);
     }
@@ -175,7 +168,7 @@ public class ShopManager {
      * @param productName Nombre del producto.
      * @return Lista de tiendas donde el producto está disponible.
      */
-    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) {
+    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceJsonException {
         return shopDAO.getShopsWhereProductExistsInCatalog(productName);
     }
     /**
@@ -185,7 +178,7 @@ public class ShopManager {
      * @param productName Nombre del producto.
      * @return Instancia del producto en la tienda.
      */
-    public ShopProduct getProductFromShop(String shopName,String productName) {
+    public ShopProduct getProductFromShop(String shopName,String productName) throws PersistenceJsonException {
         return shopDAO.getProductFromShop(shopName,productName);
     }
     /**
@@ -193,7 +186,7 @@ public class ShopManager {
      *
      * @return Lista de nombres de tiendas.
      */
-    public List<String> getAllNameShops() {
+    public List<String> getAllNameShops() throws PersistenceJsonException {
         return shopDAO.getAllNameShops();
     }
     /**
@@ -202,7 +195,7 @@ public class ShopManager {
      * @param shopName Nombre de la tienda.
      * @return Instancia de la tienda encontrada.
      */
-    public Shop getShop(String shopName) {
+    public Shop getShop(String shopName) throws PersistenceJsonException {
         return shopDAO.getShop(shopName);
     }
     /**
@@ -211,7 +204,7 @@ public class ShopManager {
      * @param shopName Nombre de la tienda.
      * @return Lista de nombres de productos de la tienda.
      */
-    public List<String> getAllProductsNameFromShop(String shopName) {
+    public List<String> getAllProductsNameFromShop(String shopName) throws PersistenceJsonException {
         return shopDAO.getAllProductsNameFromShop(shopName);
     }
     /**
@@ -219,7 +212,7 @@ public class ShopManager {
      *
      * @param s Tienda a procesar el pago.
      */
-    public void checkout(Shop s) {
+    public void checkout(Shop s) throws PersistenceJsonException {
         shopDAO.updateShop(s);
     }
 }

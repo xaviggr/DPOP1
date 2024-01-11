@@ -1,7 +1,6 @@
 package Presentation;
 
 import Bussines.Product.Product;
-import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
 import Bussines.Shop;
 import Bussines.ShopCart;
@@ -54,6 +53,32 @@ public class UI {
             }
         }
     }
+
+    /**
+     * Solicita al usuario un número entero positivo.
+     *
+     * @param message El mensaje que se muestra al usuario.
+     * @return El número entero ingresado por el usuario.
+     */
+    public int askForPositiveInteger(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                int number = scanner.nextInt();
+                if (number > 0) {
+                    return number;
+                } else {
+                    System.out.println("Please enter a positive number.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("This isn't an integer!");
+            } finally {
+                // Consume the newline character to clear the buffer
+                scanner.nextLine();
+            }
+        }
+    }
+
     /**
      * Solicita al usuario una cadena de texto.
      *
@@ -153,35 +178,6 @@ public class UI {
         };
 
     }
-    /**
-     * Solicita al usuario la categoría de un producto.
-     *
-     * @return La categoría de producto seleccionada por el usuario.
-     */
-    public ProductCategory askForProductCategory() {
-        String userInput;
-
-        boolean isValid = false;
-        showMessage("");
-        giveProductCategory();
-        do {
-            userInput = askForString("Please pick the shop’s business model: ").toUpperCase();
-
-            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
-                isValid = true;
-            } else {
-                showMessage("Please enter a valid option (A, B, or C).");
-            }
-        } while (!isValid);
-
-        return switch (userInput) {
-            case "A" -> ProductCategory.GENERAL;
-            case "B" -> ProductCategory.REDUCED_TAXES;
-            case "C" -> ProductCategory.SUPER_REDUCED_TAXES;
-            default -> ProductCategory.valueOf("Invalid option");
-        };
-    }
-
     //VALIDATION METHODS
     /**
      * Verifica si un índice dado es válido para una lista de cierto tamaño.
