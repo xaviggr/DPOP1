@@ -1,7 +1,7 @@
 package Bussines;
 
 import Bussines.Product.ShopProduct;
-import java.util.Iterator;
+
 import java.util.List;
 
 public class Shop {
