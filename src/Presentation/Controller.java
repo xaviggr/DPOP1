@@ -1,7 +1,6 @@
 package Presentation;
 
 import Bussines.Product.Product;
-import Bussines.Product.ProductCategory;
 import Bussines.Product.ShopProduct;
 import Bussines.Review;
 import Bussines.Shop;
@@ -14,265 +13,185 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * Controlador que gestiona la interacción entre la interfaz de usuario (UI),
- * el gestor de tiendas (ShopManager) y el carrito de compras (ShopCart).
- */
-@SuppressWarnings({"unused", "SpellCheckingInspection"})
 public class Controller {
-
     private final UI ui;
     private final ShopManager shopManager;
-
     private final ShopCart shopCart;
-    /**
-     * Constructor de la clase Controller.
-     *
-     * @param ui           Interfaz de usuario.
-     * @param shopManager  Gestor de tiendas.
-     * @param shopCart     Carrito de compras.
-     */
+
     public Controller(UI ui, ShopManager shopManager, ShopCart shopCart) {
         this.ui = ui;
         this.shopManager = shopManager;
         this.shopCart = shopCart;
     }
 
-    /**
-     * Método principal que inicia la ejecución del programa.
-     */
     public void run() {
-        ui.showMainLogo();
+        this.ui.showMainLogo();
+
         try {
-            checkToRun();
-            ui.showFileConfirmation();
-            startMenu();
-        } catch (FileNotFoundException e) {
-            ui.showErrorLoadingFiles();
+            this.checkToRun();
+            this.ui.showFileConfirmation();
+            this.startMenu();
+        } catch (FileNotFoundException var2) {
+            this.ui.showErrorLoadingFiles();
         }
+
     }
 
-    /**
-     * Realiza la verificación necesaria antes de ejecutar el programa.
-     *
-     * @throws FileNotFoundException Si no se encuentran archivos necesarios.
-     */
     private void checkToRun() throws FileNotFoundException {
-        shopManager.checkIfFileExists();
+        this.shopManager.checkIfFileExists();
     }
 
-    /**
-     * Inicia el menú principal del programa.
-     */
     private void startMenu() {
         int option;
-
         do {
-            ui.showMenu(); // Display the main menu
+            this.ui.showMenu();
+            option = this.ui.askForInteger("Choose a Digital Shopping Experience: ");
+            this.executeOption(option);
+        } while(option != 6);
 
-            option = ui.askForInteger("Choose a Digital Shopping Experience: "); // Ask the user for the chosen option
-            executeOption(option); // Execute the selected option
-        } while(option != 6); // Continue until the exit option is selected
     }
-    /**
-     * Ejecuta la opción seleccionada por el usuario.
-     *
-     * @param option Opción seleccionada por el usuario.
-     */
+
     private void executeOption(int option) {
-        ui.showMessage(""); // Display a blank message
+        this.ui.showMessage("");
         int choose;
         switch (option) {
             case 1:
-                //Manage products.
-                 choose = ui.showProductsMenu();
-                 productInteraction(choose);
+                choose = this.ui.showProductsMenu();
+                this.productInteraction(choose);
                 break;
             case 2:
-                // Manage shops
-                choose = ui.showShopsMenu();
-                shopInteraction(choose);
+                choose = this.ui.showShopsMenu();
+                this.shopInteraction(choose);
                 break;
             case 3:
-                //Search products
-                searchProducts();
+                this.searchProducts();
                 break;
             case 4:
-                // List shops
-                listShops();
+                this.listShops();
                 break;
             case 5:
-                // Your cart.
-                ui.showCart(shopCart);
-                choose = ui.showCartMenu();
-                shopCartInteraction(choose);
+                this.ui.showCart(this.shopCart);
+                choose = this.ui.showCartMenu();
+                this.shopCartInteraction(choose);
                 break;
             case 6:
-                exit();
+                this.exit();
                 break;
             default:
-                ui.showMessage("Incorrect option"); // Message for incorrect option
-                break;
+                this.ui.showMessage("Incorrect option");
         }
+
     }
 
-    //MENUS INTERACTION
-    /**
-     * Realiza la interacción relacionada con las tiendas según la opción seleccionada.
-     *
-     * @param choose Opción seleccionada por el usuario.
-     */
     private void shopInteraction(int choose) {
-
         switch (choose) {
             case 1:
-                //Create shop
-                ui.showMessage("");
-                createShop();
+                this.ui.showMessage("");
+                this.createShop();
                 break;
             case 2:
-                // Expand shop catalogue
-                ui.showMessage("");
-                expandCatalog();
+                this.ui.showMessage("");
+                this.expandCatalog();
                 break;
             case 3:
-                // Reduce Shop catalogue
-                ui.showMessage("");
-                reduceCatalog();
-                break;
+                this.ui.showMessage("");
+                this.reduceCatalog();
             case 4:
-                //Back
                 break;
             default:
-                ui.showMessage("Invalid option.");
-                break;
+                this.ui.showMessage("Invalid option.");
         }
+
     }
 
-    /**
-     * Realiza la interacción relacionada con la búsqueda de productos.
-     *
-     *      @param choose Opción seleccionada por el usuario.
-     *      @param p      Producto asociado a la interacción.
-     */
     private void searchProductInteraction(int choose, Product p) {
-
         switch (choose) {
             case 1:
-                ui.showMessage("");
-                readReviews(p);
+                this.ui.showMessage("");
+                this.readReviews(p);
                 break;
             case 2:
-                ui.showMessage("");
-                makeReviews(p);
-                break;
+                this.ui.showMessage("");
+                this.makeReviews(p);
             case 3:
-                //Back
                 break;
             default:
-                ui.showMessage("Invalid option.");
-                break;
+                this.ui.showMessage("Invalid option.");
         }
+
     }
-    /**
-     * Realiza la interacción relacionada con los productos según la opción seleccionada.
-     *
-     * @param choose Opción seleccionada por el usuario.
-     */
+
     private void productInteraction(int choose) {
         switch (choose) {
             case 1:
-                ui.showMessage("");
-                createProduct();
+                this.ui.showMessage("");
+                this.createProduct();
                 break;
             case 2:
-                ui.showMessage("");
-                removeProduct();
-                break;
+                this.ui.showMessage("");
+                this.removeProduct();
             case 3:
-                //Back
                 break;
             default:
-                ui.showMessage("Invalid option.");
-                break;
+                this.ui.showMessage("Invalid option.");
         }
+
     }
-    /**
-     * Realiza la interacción relacionada con la lista de tiendas según la opción seleccionada.
-     *
-     * @param choose Opción seleccionada por el usuario.
-     * @param p      Producto asociado a la interacción.
-     */
+
     private void listShopsInteraction(int choose, ShopProduct p) {
-
         switch (choose) {
             case 1:
-                ui.showMessage("");
-                readReviews(p);
+                this.ui.showMessage("");
+                this.readReviews(p.getProduct());
                 break;
             case 2:
-                ui.showMessage("");
-                makeReviews(p);
+                this.ui.showMessage("");
+                this.makeReviews(p.getProduct());
                 break;
             case 3:
-                ui.showMessage("");
-                addToCart(p);
-                break;
+                this.ui.showMessage("");
+                this.addToCart(p);
             case 4:
-                //Back
                 break;
             default:
-                ui.showMessage("Invalid option.");
-                break;
+                this.ui.showMessage("Invalid option.");
         }
-    }
-    /**
-     * Realiza la interacción relacionada con el carrito de compras según la opción seleccionada.
-     *
-     * @param choose Opción seleccionada por el usuario.
-     */
-    private void shopCartInteraction(int choose) {
 
+    }
+
+    private void shopCartInteraction(int choose) {
         switch (choose) {
             case 1:
-                ui.showMessage("");
-                checkout();
+                this.ui.showMessage("");
+                this.checkout();
                 break;
             case 2:
-                ui.showMessage("");
-                clearCart();
-                break;
+                this.ui.showMessage("");
+                this.clearCart();
             case 3:
-                //Back
                 break;
             default:
-                ui.showMessage("Invalid option.");
-                break;
+                this.ui.showMessage("Invalid option.");
         }
+
     }
 
-    //SHOPS
-    /**
-     * Realiza la interacción relacionada con la creación de una tienda.
-     */
     private void createShop() {
-        String shopName = ui.askForString("Please enter the shop's name: ");
-        String description = ui.askForString("Please enter the shop's description: ");
-        int foundingYear = ui.askForPositiveInteger("Please enter the shop's founding year: ");
-        String businessModel = ui.askForShopModel();
+        String shopName = this.ui.askForString("Please enter the shop's name: ");
+        String description = this.ui.askForString("Please enter the shop's description: ");
+        int foundingYear = this.ui.askForPositiveInteger("Please enter the shop's founding year: ");
+        String businessModel = this.ui.askForShopModel();
+        Shop s = new Shop(shopName, description, foundingYear, 0.0, businessModel, new ArrayList<>());
 
-        Shop s = new Shop(shopName,description,foundingYear, 0,businessModel,null);
         try {
-            shopManager.createShop(s);
-        } catch (PersistenceJsonException e) {
-            //Mensaje de error
-            throw new RuntimeException(e);
+            this.shopManager.createShop(s);
+        } catch (PersistenceJsonException var7) {
+            throw new RuntimeException(var7);
         }
-        ui.showMessage("'" + shopName + "'"  + " is now a part of the elCofre family.\n");
+
+        this.ui.showMessage("'" + shopName + "' is now a part of the elCofre family.\n");
     }
-    /**
-     * Realiza la interacción relacionada con la expansión del catálogo de una tienda.
-     */
+
     private void expandCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String productName = ui.askForString("Please enter the product's name: ");
@@ -296,7 +215,7 @@ public class Controller {
                     ui.showMessage("Error. The price is higher than the maximum retail price.\n");
                     return;
                 }
-                ShopProduct sp = new ShopProduct(p.getProductName(),p.getBrand(),p.getMaxPrice(),p.getCategory(),price);
+                ShopProduct sp = new ShopProduct(p,price);
                 shopManager.expandCatalog(shopName, sp);
                 ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getBrand()+"'" + " is now being sold at " + "'"+shopName+"'"+".\n");
             }
@@ -306,86 +225,69 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-    /**
-     * Realiza la interacción relacionada con la reducción del catálogo de una tienda.
-     */
+
     private void reduceCatalog() {
-        String shopName = ui.askForString("Please enter the shop's name: ");
-        Shop s;
+        String shopName = this.ui.askForString("Please enter the shop's name: ");
+
         try {
-            s = shopManager.findShopByName(shopName);
-
+            Shop s = this.shopManager.findShopByName(shopName);
             if (s == null) {
-                ui.showMessage("This shop doesn't exists.");
-                return;
+                this.ui.showMessage("This shop doesn't exists.");
+            } else {
+                List<String> shopProductsNames = this.shopManager.getAllProductsNameFromShop(shopName);
+                this.ui.showMessage("This shop sells the following products:");
+                int index = this.ui.showListAndGetChoice(shopProductsNames, "Which one would you like to remove? ");
+                if (this.ui.isValidIndex(index, shopProductsNames.size() - 1)) {
+                    String productName = shopProductsNames.get(index - 1);
+                    this.shopManager.reduceCatalog(shopName, productName);
+                    this.ui.showMessage("\"" + productName + "\" is no longer being sold at \"" + shopName + "\".\n");
+                }
+
             }
-
-            List<String> shopProductsNames = shopManager.getAllProductsNameFromShop(shopName);
-            ui.showMessage("This shop sells the following products:");
-            int index = ui.showListAndGetChoice(shopProductsNames, "Which one would you like to remove? ");
-            if (ui.isValidIndex(index, shopProductsNames.size() - 1)) {
-                String productName = shopProductsNames.get(index - 1);
-                shopManager.reduceCatalog(shopName, productName);
-                ui.showMessage("\"" + productName + "\"" + " is no longer being sold at " + "\"" + shopName + "\".\n");
-
-            }
-
-        } catch (PersistenceJsonException e) {
-            throw new RuntimeException(e);
+        } catch (PersistenceJsonException var6) {
+            throw new RuntimeException(var6);
         }
     }
-    /**
-     * Realiza la interacción relacionada con la lista de tiendas.
-     */
-    private void listShops() {
-        List<String> shopNames;
-        try {
-            shopNames = shopManager.getAllNameShops();
-            int choose = ui.showListAndGetChoice(shopNames, "Which catalogue do you want to see? ");
-            if (ui.isValidIndex(choose, shopNames.size() - 1) && !shopNames.isEmpty())  {
-                Shop s = shopManager.getShop(shopNames.get(choose - 1));
-                List<ShopProduct> products = shopManager.getAllProductsFromShop(s.getName());
-                ui.showShopCatalogue(s, products);
-                int element = ui.askForInteger("Which one are you interested in? ");
 
-                if (ui.isValidIndex(element, products.size() - 1)){
+    private void listShops() {
+        try {
+            List<String> shopNames = this.shopManager.getAllNameShops();
+            int choose = this.ui.showListAndGetChoice(shopNames, "Which catalogue do you want to see? ");
+            if (this.ui.isValidIndex(choose, shopNames.size() - 1) && !shopNames.isEmpty()) {
+                Shop s = this.shopManager.getShop(shopNames.get(choose - 1));
+                List<ShopProduct> products = this.shopManager.getAllProductsFromShop(s.getName());
+                this.ui.showShopCatalogue(s, products);
+                int element = this.ui.askForInteger("Which one are you interested in? ");
+                if (this.ui.isValidIndex(element, products.size() - 1)) {
                     ShopProduct sp = products.get(element - 1);
-                    int selected = ui.showCatalogMenu("Choose an option: ");
-                    listShopsInteraction(selected, sp);
+                    int selected = this.ui.showCatalogMenu("Choose an option: ");
+                    this.listShopsInteraction(selected, sp);
                 }
             }
 
-        } catch (PersistenceJsonException e) {
-            throw new RuntimeException(e);
+        } catch (PersistenceJsonException var8) {
+            throw new RuntimeException(var8);
         }
     }
 
-    //PRODUCTS
-    /**
-     * Realiza la interacción relacionada con la creación de un producto.
-     */
     private void createProduct() {
-        String name = ui.askForString("Please enter the product’s name: ");
-        String brand = ui.askForString("Please enter the product’s brand: ");
-        double maxPrice = ui.askForPositiveDouble("Please enter the product’s maximum retail price: ");
-        ProductCategory category = askForProductCategory();
+        String name = this.ui.askForString("Please enter the product’s name: ");
+        String brand = this.ui.askForString("Please enter the product’s brand: ");
+        double maxPrice = this.ui.askForPositiveDouble("Please enter the product’s maximum retail price: ");
+        String category = this.ui.askForProductCategory();
 
         try {
-            if(shopManager.findProduct(name) != null) {
-                ui.showMessage("Error. That product already exists.\n");
-                return;
+            if (this.shopManager.findProduct(name) != null) {
+                this.ui.showMessage("Error. That product already exists.\n");
+            } else {
+                this.shopManager.createProduct(name, brand, maxPrice, category);
+                this.ui.showMessage("The product \"" + name + "\" by \"" + brand + "\" was added to the system.\n");
             }
-            shopManager.createProduct(name, brand, maxPrice, category);
-            ui.showMessage("The product " + "\"" + name + "\"" + " by \"" + brand + "\" was added to the system.\n");
-
-        } catch (PersistenceJsonException e) {
-            //Mensaje de error
-            throw new RuntimeException(e);
+        } catch (PersistenceJsonException var7) {
+            throw new RuntimeException(var7);
         }
     }
-    /**
-     * Realiza la interacción relacionada con la eliminación de un producto.
-     */
+
     private void removeProduct() {
         List<Product> products;
         try {
@@ -416,35 +318,24 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-    /**
-     * Realiza la interacción relacionada con la búsqueda de productos.
-     */
-    private void searchProducts() {
-        String productName = ui.askForString("Enter your query: ");
-        LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = getDictionaryWithProductAndShopsWhereExistsWithPrice(productName);
-        if (products != null) {
-            ui.showProductSearched(products);
-            int choose = ui.askForInteger("Which one would you like to review?");
 
-            if (ui.isValidIndex(choose, products.size() - 1)) {
-                int selected = ui.showReviewMenu("Choose an option: ");
-                Product p = (Product) products.keySet().toArray()[choose - 1];
-                searchProductInteraction(selected, p);
+    private void searchProducts() {
+        String productName = this.ui.askForString("Enter your query: ");
+        LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = this.getDictionaryWithProductAndShopsWhereExistsWithPrice(productName);
+        if (products != null) {
+            this.ui.showProductSearched(products);
+            int choose = this.ui.askForInteger("Which one would you like to review?");
+            if (this.ui.isValidIndex(choose, products.size() - 1)) {
+                int selected = this.ui.showReviewMenu("Choose an option: ");
+                Product p = (Product)products.keySet().toArray()[choose - 1];
+                this.searchProductInteraction(selected, p);
             }
         } else {
-            ui.showMessage("No products found.");
+            this.ui.showMessage("No products found.");
         }
+
     }
 
-    /**
-     * Obtiene un diccionario que mapea cada producto encontrado por la búsqueda
-     * con las tiendas donde está disponible y sus respectivos precios.
-     *
-     * @param productName Nombre del producto a buscar.
-     * @return Un diccionario que asocia cada producto con un subdiccionario que
-     *         mapea cada tienda donde está disponible con su precio.
-     *         Si no se encuentra ningún producto, devuelve null.
-     */
     private LinkedHashMap<Product, LinkedHashMap<Shop, Double>> getDictionaryWithProductAndShopsWhereExistsWithPrice(String productName) {
         LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = new LinkedHashMap<>();
         List<Product> productsFound;
@@ -471,23 +362,19 @@ public class Controller {
         }
     }
 
-    //CART
     private void addToCart(ShopProduct sp) {
         shopCart.addProductToCart(sp);
         ui.showMessage("1x \"" + sp.getProductName() + "\" by \"" + sp.getBrand() + "\" has been added to your cart.\n");
     }
-    /**
-     * Realiza la interacción relacionada con la limpieza del carrito de compras.
-     */
+
     private void clearCart() {
-        if (ui.askForConfirmation("Are you sure you want to clear your cart?")) {
-            shopCart.clearCart();
-            ui.showMessage("Your cart has been cleared.\n");
+        if (this.ui.askForConfirmation("Are you sure you want to clear your cart?")) {
+            this.shopCart.clearCart();
+            this.ui.showMessage("Your cart has been cleared.\n");
         }
+
     }
-    /**
-     * Realiza la interacción relacionada con el proceso de pago y vacía el carrito de compras.
-     */
+
     private void checkout() {
         if (ui.askForConfirmation("Are you sure you want to checkout?")) {
 
@@ -512,12 +399,6 @@ public class Controller {
         }
     }
 
-    //REVIEWS
-    /**
-     * Realiza la interacción relacionada con las revisiones de un producto.
-     *
-     * @param p Producto asociado a las revisiones.
-     */
     private void readReviews(Product p) {
         // List reviews from product selected.
         List<Review> reviews;
@@ -540,11 +421,7 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-    /**
-     * Realiza la interacción relacionada con la creación de revisiones de un producto.
-     *
-     * @param p Producto asociado a la revisión.
-     */
+
     private void makeReviews(Product p) {
         // Make a review for the product selected.
         String stars = ui.askForString("Please rate the product (1-5 stars): ");
@@ -560,40 +437,7 @@ public class Controller {
         ui.showMessage("Thank you for your review of \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"");
     }
 
-    /**
-     * Solicita al usuario la categoría de un producto.
-     *
-     * @return La categoría de producto seleccionada por el usuario.
-     */
-    public ProductCategory askForProductCategory() {
-        String userInput;
-
-        boolean isValid = false;
-        ui.showMessage("");
-        ui.giveProductCategory();
-        do {
-            userInput = ui.askForString("Please pick the shop’s business model: ").toUpperCase();
-
-            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
-                isValid = true;
-            } else {
-                ui.showMessage("Please enter a valid option (A, B, or C).");
-            }
-        } while (!isValid);
-
-        return switch (userInput) {
-            case "A" -> ProductCategory.GENERAL;
-            case "B" -> ProductCategory.REDUCED_TAXES;
-            case "C" -> ProductCategory.SUPER_REDUCED_TAXES;
-            default -> ProductCategory.valueOf("Invalid option");
-        };
-    }
-
-    //EXIT
-    /**
-     * Realiza la interacción relacionada con la salida del programa.
-     */
     private void exit() {
-        ui.showMessage("We hope to see you again!");
+        this.ui.showMessage("We hope to see you again!");
     }
 }

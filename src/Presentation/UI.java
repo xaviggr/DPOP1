@@ -178,6 +178,29 @@ public class UI {
         };
 
     }
+
+    public String askForProductCategory() {
+        String userInput;
+
+        boolean isValid = false;
+        showMessage("");
+        giveProductCategory();
+        do {
+            userInput = askForString("Please pick the shop’s business model: ").toUpperCase();
+
+            if (userInput.equals("A") || userInput.equals("B") || userInput.equals("C")) {
+                isValid = true;
+            } else {
+                showMessage("Please enter a valid option (A, B, or C).");
+            }
+        } while (!isValid);
+
+        return switch (userInput) {
+            case "B" -> "ReducedTaxesProduct";
+            case "C" -> "SuperReducedTaxes";
+            default -> "GeneralProduct";
+        };
+    }
     //VALIDATION METHODS
     /**
      * Verifica si un índice dado es válido para una lista de cierto tamaño.

@@ -1,44 +1,43 @@
 package Bussines.Product;
 
-
-/**
- * Clase que representa un producto específico en el catálogo de una tienda.
- * Hereda de la clase base {@link Product}.
- */
-@SuppressWarnings("SpellCheckingInspection")
-public class ShopProduct extends Product {
-
+public class ShopProduct {
     private double price;
+    private Product product;
 
-    /**
-     * Constructor para crear un objeto ShopProduct.
-     *
-     * @param name     Nombre del producto.
-     * @param brand    Marca del producto.
-     * @param maxPrice Precio máximo sugerido del producto.
-     * @param category Categoría del producto.
-     * @param price    Precio del producto en la tienda.
-     */
-    public ShopProduct(String name, String brand, Double maxPrice, ProductCategory category, Double price) {
-        super(name, brand, maxPrice, category);
+    public ShopProduct(Product product, Double price) {
+        this.product = product;
         this.price = price;
     }
 
-    /**
-     * Obtiene el precio del producto en la tienda.
-     *
-     * @return Precio del producto.
-     */
-    public double getProductPrice() {
-        return price;
+    public String getProductName() {
+        return this.product.getProductName();
     }
 
-    /**
-     * Establece el precio del producto en la tienda.
-     *
-     * @param price Nuevo precio del producto.
-     */
+    public Product getProduct() {
+        return this.product;
+    }
+
+    public double getProductPrice() {
+        return this.price;
+    }
+
     public void setProductPrice(double price) {
         this.price = price;
+    }
+
+    public String getBrand() {
+        return this.product.getBrand();
+    }
+
+    public void setBrand(String brand) {
+        this.product.setBrand(brand);
+    }
+
+    public Double getMaxPrice() {
+        return this.product.getMaxPrice();
+    }
+
+    public void setMaxPrice(double maxPrice) {
+        this.product.setMaxPrice(maxPrice);
     }
 }
