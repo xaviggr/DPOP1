@@ -1,4 +1,4 @@
-package Bussines;
+package Bussines.Shop;
 
 import Bussines.Product.ShopProduct;
 

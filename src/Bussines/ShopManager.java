@@ -5,6 +5,7 @@ import Bussines.Product.Product;
 import Bussines.Product.ReducedTaxesProduct;
 import Bussines.Product.ShopProduct;
 import Bussines.Product.SuperReducedTaxes;
+import Bussines.Shop.Shop;
 import Persistence.ProductDAO;
 import Persistence.ShopDAO;
 import Persistence.exception.PersistenceJsonException;

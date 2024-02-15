@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "name": "Jordan 1",
+    "brand": "Nike",
+    "mrp": 90.0,
+    "category": "GeneralProduct",
+    "reviews": [
+      {
+        "stars": 4,
+        "commentary": "Buen producto!!"
+      }
+    ]
+  }
+]

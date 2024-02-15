@@ -2,7 +2,7 @@ package Presentation;
 
 import Bussines.Product.Product;
 import Bussines.Product.ShopProduct;
-import Bussines.Shop;
+import Bussines.Shop.Shop;
 import Bussines.ShopCart;
 
 import java.util.InputMismatchException;

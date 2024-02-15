@@ -1,7 +1,7 @@
 package Persistence;
 
 import Bussines.Product.*;
-import Bussines.Shop;
+import Bussines.Shop.Shop;
 import Persistence.exception.PersistenceJsonException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

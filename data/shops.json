@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "name": "Nike",
+    "description": "Tienda de bambas",
+    "since": 1987,
+    "earnings": 0.0,
+    "businessModel": "Maximum Benefits",
+    "catalogue": [
+      {
+        "name": "Jordan 1",
+        "brand": "Nike",
+        "category": "ShopProduct",
+        "mrp": 90.0,
+        "price": 66.0
+      }
+    ]
+  }
+]
