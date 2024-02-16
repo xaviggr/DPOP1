@@ -4,6 +4,7 @@ import Persistence.ProductDAO;
 import Persistence.ShopDAO;
 import Presentation.Controller;
 import Presentation.UI;
+import edu.salle.url.api.ApiHelper;
 import edu.salle.url.api.exception.ApiException;
 
 /**

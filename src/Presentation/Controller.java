@@ -6,6 +6,8 @@ import Bussines.Review;
 import Bussines.Shop.Shop;
 import Bussines.ShopCart;
 import Bussines.ShopManager;
+import Bussines.exception.BusinessException;
+import Bussines.exception.PersistenceIntegrationException;
 import Persistence.exception.PersistenceJsonException;
 
 import java.io.FileNotFoundException;
@@ -31,10 +33,9 @@ public class Controller {
             this.checkToRun();
             this.ui.showFileConfirmation();
             this.startMenu();
-        } catch (FileNotFoundException var2) {
+        } catch (FileNotFoundException e) {
             this.ui.showErrorLoadingFiles();
         }
-
     }
 
     private void checkToRun() throws FileNotFoundException {
@@ -185,8 +186,8 @@ public class Controller {
 
         try {
             this.shopManager.createShop(s);
-        } catch (PersistenceJsonException var7) {
-            throw new RuntimeException(var7);
+        } catch (BusinessException e) {
+            throw new RuntimeException(e);
         }
 
         this.ui.showMessage("'" + shopName + "' is now a part of the elCofre family.\n");
@@ -220,7 +221,7 @@ public class Controller {
                 ui.showMessage("'" + p.getProductName() +"'" + " by " + "'"+p.getBrand()+"'" + " is now being sold at " + "'"+shopName+"'"+".\n");
             }
 
-        } catch (PersistenceJsonException e) {
+        } catch (BusinessException e) {
             //Mensaje de error
             throw new RuntimeException(e);
         }
@@ -244,8 +245,8 @@ public class Controller {
                 }
 
             }
-        } catch (PersistenceJsonException var6) {
-            throw new RuntimeException(var6);
+        } catch (BusinessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -265,8 +266,8 @@ public class Controller {
                 }
             }
 
-        } catch (PersistenceJsonException var8) {
-            throw new RuntimeException(var8);
+        } catch (BusinessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -283,8 +284,8 @@ public class Controller {
                 this.shopManager.createProduct(name, brand, maxPrice, category);
                 this.ui.showMessage("The product \"" + name + "\" by \"" + brand + "\" was added to the system.\n");
             }
-        } catch (PersistenceJsonException var7) {
-            throw new RuntimeException(var7);
+        } catch (BusinessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -313,7 +314,7 @@ public class Controller {
                     removeProduct();
                 }
             }
-        } catch (PersistenceJsonException e) {
+        } catch (BusinessException e) {
             //Mostrar mensaje error
             throw new RuntimeException(e);
         }
@@ -356,7 +357,7 @@ public class Controller {
                 return products;
             }
 
-        } catch (PersistenceJsonException e) {
+        } catch (BusinessException e) {
             //Mostrar mensaje error
             throw new RuntimeException(e);
         }
@@ -389,7 +390,7 @@ public class Controller {
                             shopManager.checkout(s);
                         }
                     }
-                } catch (PersistenceJsonException e) {
+                } catch (BusinessException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -416,7 +417,7 @@ public class Controller {
                 ui.showMessage("Average rating: " + (sum/reviews.size()) + "\n");
             }
 
-        } catch (PersistenceJsonException e) {
+        } catch (BusinessException e) {
             //Mostrar mensaje error
             throw new RuntimeException(e);
         }
@@ -429,7 +430,7 @@ public class Controller {
         Review review = new Review(stars, commentary);
         try {
             shopManager.makeReview(p.getProductName(), review);
-        } catch (PersistenceJsonException e) {
+        } catch (BusinessException e) {
             //Mostrar mensaje error
             throw new RuntimeException(e);
         }

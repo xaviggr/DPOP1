@@ -1,14 +1,12 @@
 package Bussines;
 
-import Bussines.Product.GeneralProduct;
-import Bussines.Product.Product;
-import Bussines.Product.ReducedTaxesProduct;
-import Bussines.Product.ShopProduct;
-import Bussines.Product.SuperReducedTaxes;
+import Bussines.Product.*;
 import Bussines.Shop.Shop;
+import Bussines.exception.PersistenceIntegrationException;
 import Persistence.ProductDAO;
 import Persistence.ShopDAO;
 import Persistence.exception.PersistenceJsonException;
+
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -21,95 +19,176 @@ public class ShopManager {
         this.productDAO = productDAO;
     }
 
-    public void createProduct(String name, String brand, double maxPrice, String category) throws PersistenceJsonException {
-        Product p;
+    public void createProduct(String name, String brand, double maxPrice, String category) throws PersistenceIntegrationException {
+        try {
+            Product p;
 
-        switch (category) {
-            case "REDUCED_TAXES" -> p = new ReducedTaxesProduct(name, brand, maxPrice);
-            case "SUPER_REDUCED_TAXES" -> p = new SuperReducedTaxes(name, brand, maxPrice);
-            default -> p = new GeneralProduct(name, brand, maxPrice);
+            switch (category) {
+                case "REDUCED_TAXES" -> p = new ReducedTaxesProduct(name, brand, maxPrice);
+                case "SUPER_REDUCED_TAXES" -> p = new SuperReducedTaxes(name, brand, maxPrice);
+                default -> p = new GeneralProduct(name, brand, maxPrice);
+            }
+            this.productDAO.addProduct(p);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
         }
-
-        this.productDAO.addProduct(p);
     }
 
-    public void removeProduct(String nameProduct) throws PersistenceJsonException {
-        this.productDAO.removeProduct(nameProduct);
-        this.shopDAO.removeProductFromShops(nameProduct);
+    public void removeProduct(String nameProduct) throws PersistenceIntegrationException {
+        try {
+            this.productDAO.removeProduct(nameProduct);
+            this.shopDAO.removeProductFromShops(nameProduct);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public void createShop(Shop shop) throws PersistenceJsonException {
-        this.shopDAO.addShop(shop);
+    public void createShop(Shop shop) throws PersistenceIntegrationException {
+        try {
+            this.shopDAO.addShop(shop);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public void expandCatalog(String shopName, ShopProduct sp) throws PersistenceJsonException {
-        this.shopDAO.addProductInShop(shopName, sp);
+    public void expandCatalog(String shopName, ShopProduct sp) throws PersistenceIntegrationException {
+        try {
+            this.shopDAO.addProductInShop(shopName, sp);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public void reduceCatalog(String shopName, String productName) throws PersistenceJsonException {
-        this.shopDAO.removeProductFromShop(shopName, productName);
+    public void reduceCatalog(String shopName, String productName) throws PersistenceIntegrationException {
+        try {
+            this.shopDAO.removeProductFromShop(shopName, productName);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public Product findProduct(String nameProduct) throws PersistenceJsonException {
-        return this.productDAO.findProduct(nameProduct);
+    public Product findProduct(String nameProduct) throws PersistenceIntegrationException {
+        try {
+            return this.productDAO.findProduct(nameProduct);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public List<Product> searchProductsByQuery(String query) throws PersistenceJsonException {
-        return this.productDAO.findProductsByQuery(query);
+    public List<Product> searchProductsByQuery(String query) throws PersistenceIntegrationException {
+        try {
+            return this.productDAO.findProductsByQuery(query);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public List<Review> readReviews(String nameProduct) throws PersistenceJsonException {
-        return this.productDAO.findProduct(nameProduct).getReviews();
+    public List<Review> readReviews(String nameProduct) throws PersistenceIntegrationException {
+        try {
+            return this.productDAO.findProduct(nameProduct).getReviews();
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public void makeReview(String nameProduct, Review review) throws PersistenceJsonException {
-        Product product = this.productDAO.findProduct(nameProduct);
-        product.addReview(review);
-        this.productDAO.updateProduct(product);
+    public void makeReview(String nameProduct, Review review) throws PersistenceIntegrationException {
+        try {
+            Product product;
+            product = this.productDAO.findProduct(nameProduct);
+            product.addReview(review);
+            this.productDAO.updateProduct(product);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public void checkIfFileExists() throws FileNotFoundException {
-        this.productDAO.checkIfFileExists();
+    public void checkIfFileExists() throws RuntimeException {
+        try {
+            this.productDAO.checkIfFileExists();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public List<Product> getAllProducts() throws PersistenceJsonException {
-        return this.productDAO.getAllProducts();
+    public List<Product> getAllProducts() throws PersistenceIntegrationException {
+        try {
+            return this.productDAO.getAllProducts();
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public List<ShopProduct> getAllProductsFromShop(String shopName) throws PersistenceJsonException {
-        return this.shopDAO.getProductsFromShop(shopName);
+    public List<ShopProduct> getAllProductsFromShop(String shopName) throws PersistenceIntegrationException {
+        try {
+            return this.shopDAO.getProductsFromShop(shopName);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public List<Shop> getAllShops() throws PersistenceJsonException {
-        return this.shopDAO.getShops();
+    public List<Shop> getAllShops() throws PersistenceIntegrationException {
+        try {
+            return this.shopDAO.getShops();
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public Shop findShopByName(String shopName) throws PersistenceJsonException {
-        List<Shop> list = this.shopDAO.getShops();
-        return this.shopDAO.findShopByName(list, shopName);
+    public Shop findShopByName(String shopName) throws PersistenceIntegrationException {
+        try {
+            List<Shop> list;
+            list = this.shopDAO.getShops();
+            return this.shopDAO.findShopByName(list, shopName);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceJsonException {
-        return this.shopDAO.getShopsWhereProductExistsInCatalog(productName);
+    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceIntegrationException {
+        try {
+            return this.shopDAO.getShopsWhereProductExistsInCatalog(productName);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public ShopProduct getProductFromShop(String shopName, String productName) throws PersistenceJsonException {
-        return this.shopDAO.getProductFromShop(shopName, productName);
+    public ShopProduct getProductFromShop(String shopName, String productName) throws PersistenceIntegrationException {
+        try {
+            return this.shopDAO.getProductFromShop(shopName, productName);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public List<String> getAllNameShops() throws PersistenceJsonException {
-        return this.shopDAO.getAllNameShops();
+    public List<String> getAllNameShops() throws PersistenceIntegrationException {
+        try {
+            return this.shopDAO.getAllNameShops();
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public Shop getShop(String shopName) throws PersistenceJsonException {
-        return this.shopDAO.getShop(shopName);
+    public Shop getShop(String shopName) throws PersistenceIntegrationException {
+        try {
+            return this.shopDAO.getShop(shopName);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public List<String> getAllProductsNameFromShop(String shopName) throws PersistenceJsonException {
-        return this.shopDAO.getAllProductsNameFromShop(shopName);
+    public List<String> getAllProductsNameFromShop(String shopName) throws PersistenceIntegrationException {
+        try {
+            return this.shopDAO.getAllProductsNameFromShop(shopName);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 
-    public void checkout(Shop s) throws PersistenceJsonException {
-        this.shopDAO.updateShop(s);
+    public void checkout(Shop s) throws PersistenceIntegrationException {
+        try {
+            this.shopDAO.updateShop(s);
+        } catch (PersistenceJsonException e) {
+            throw new PersistenceIntegrationException("",e);
+        }
     }
 }
