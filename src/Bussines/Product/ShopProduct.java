@@ -1,20 +1,43 @@
 package Bussines.Product;
 
-import Bussines.ShopCart;
-import jdk.jfr.Category;
-
-import java.util.List;
-
-public class ShopProduct extends Product {
-
+public class ShopProduct {
     private double price;
+    private Product product;
 
-    public ShopProduct(String name, String brand, Double maxPrice, ProductCategory category, Double price) {
-        super(name, brand, maxPrice, category);
+    public ShopProduct(Product product, Double price) {
+        this.product = product;
         this.price = price;
     }
 
+    public String getProductName() {
+        return this.product.getProductName();
+    }
+
+    public Product getProduct() {
+        return this.product;
+    }
+
     public double getProductPrice() {
-        return price;
+        return this.price;
+    }
+
+    public void setProductPrice(double price) {
+        this.price = price;
+    }
+
+    public String getBrand() {
+        return this.product.getBrand();
+    }
+
+    public void setBrand(String brand) {
+        this.product.setBrand(brand);
+    }
+
+    public Double getMaxPrice() {
+        return this.product.getMaxPrice();
+    }
+
+    public void setMaxPrice(double maxPrice) {
+        this.product.setMaxPrice(maxPrice);
     }
 }
