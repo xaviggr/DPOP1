@@ -14,5 +14,13 @@
         "price": 66.0
       }
     ]
+  },
+  {
+    "name": "Adidas",
+    "description": "las mejores zapas",
+    "since": 1234,
+    "earnings": 0.0,
+    "businessModel": "Maximum Benefits",
+    "catalogue": []
   }
 ]

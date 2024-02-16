@@ -10,5 +10,12 @@
         "commentary": "Buen producto!!"
       }
     ]
+  },
+  {
+    "name": "la cholas",
+    "brand": "peluco",
+    "mrp": 12.0,
+    "category": "GeneralProduct",
+    "reviews": []
   }
 ]

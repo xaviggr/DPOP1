@@ -256,13 +256,20 @@ public class Controller {
             if (this.ui.isValidIndex(choose, shopNames.size() - 1) && !shopNames.isEmpty()) {
                 Shop s = this.shopManager.getShop(shopNames.get(choose - 1));
                 List<ShopProduct> products = this.shopManager.getAllProductsFromShop(s.getName());
-                this.ui.showShopCatalogue(s, products);
-                int element = this.ui.askForInteger("Which one are you interested in? ");
-                if (this.ui.isValidIndex(element, products.size() - 1)) {
-                    ShopProduct sp = products.get(element - 1);
-                    int selected = this.ui.showCatalogMenu("Choose an option: ");
-                    this.listShopsInteraction(selected, sp);
+                if (!products.isEmpty()) {
+                    this.ui.showShopCatalogue(s, products);
+                    int element = this.ui.askForInteger("Which one are you interested in? ");
+                    if (this.ui.isValidIndex(element, products.size() - 1)) {
+                        ShopProduct sp = products.get(element - 1);
+                        int selected = this.ui.showCatalogMenu("Choose an option: ");
+                        this.listShopsInteraction(selected, sp);
+                    }
+                } else {
+                    this.ui.showMessage("This shop doesn't have any products in its catalogue\n");
                 }
+
+            } else {
+                this.ui.showMessage("Error, invalid Option.\n");
             }
 
         } catch (PersistenceJsonException var8) {
