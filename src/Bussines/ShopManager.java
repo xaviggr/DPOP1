@@ -5,6 +5,7 @@ import Bussines.Shop.Shop;
 import Bussines.exception.PersistenceIntegrationException;
 import Persistence.*;
 import Persistence.exception.PersistenceJsonException;
+import edu.salle.url.api.exception.ApiException;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ShopManager {
                 default -> p = new GeneralProduct(name, brand, maxPrice);
             }
             this.productDAO.addProduct(p);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -45,7 +46,7 @@ public class ShopManager {
         try {
             this.productDAO.removeProduct(nameProduct);
             this.shopDAO.removeProductFromShops(nameProduct);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -77,7 +78,7 @@ public class ShopManager {
     public Product findProduct(String nameProduct) throws PersistenceIntegrationException {
         try {
             return this.productDAO.findProduct(nameProduct);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -85,7 +86,7 @@ public class ShopManager {
     public List<Product> searchProductsByQuery(String query) throws PersistenceIntegrationException {
         try {
             return this.productDAO.findProductsByQuery(query);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -93,7 +94,7 @@ public class ShopManager {
     public List<Review> readReviews(String nameProduct) throws PersistenceIntegrationException {
         try {
             return this.productDAO.findProduct(nameProduct).getReviews();
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -104,7 +105,7 @@ public class ShopManager {
             product = this.productDAO.findProduct(nameProduct);
             product.addReview(review);
             this.productDAO.updateProduct(product);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -120,7 +121,7 @@ public class ShopManager {
     public List<Product> getAllProducts() throws PersistenceIntegrationException {
         try {
             return this.productDAO.getAllProducts();
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }

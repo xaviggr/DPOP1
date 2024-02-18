@@ -20,7 +20,7 @@ public abstract class DAOJSON {
     public DAOJSON() {
     }
 
-    public void checkIfFileExists() throws FileNotFoundException {
+    protected void checkIfFileExists() throws FileNotFoundException {
         File file = new File(this.path);
         if (!file.exists()) {
             throw new FileNotFoundException("File " + this.path + " not exists.");
