@@ -31,32 +31,37 @@ public class Controller {
     public void run() {
         this.ui.showMainLogo();
         this.ui.showMessage("Checking API status...");
-        switch (checkApi()) {
-            case 1:
-                //Api available
-                this.ui.showMessage("Starting program...\n\n");
-                this.shopManager = new ShopManager(DataSourceOptions.API);
-                this.startMenu();
-                break;
-            case 0:
-                //Api not available
-                this.ui.showMessage("Error: the API isn't available.");
-                try {
-                    this.shopManager = new ShopManager(DataSourceOptions.JSON);
-                    this.checkToRun();
-                    this.ui.showFileConfirmation();
-                    this.startMenu();
-                } catch (FileNotFoundException e) {
-                    this.ui.showErrorLoadingFiles();
-                }
-                break;
-        }
+        if (checkApi()) {
+            //Api available
+            this.ui.showMessage("Starting program...\n\n");
+            this.shopManager = new ShopManager(DataSourceOptions.API);
+            this.startMenu();
 
+        } else {
+            //Api not available
+            this.ui.showMessage("Error: the API isn't available.");
+            try {
+                this.shopManager = new ShopManager(DataSourceOptions.JSON);
+                this.checkToRun();
+                this.ui.showFileConfirmation();
+                this.startMenu();
+            } catch (FileNotFoundException e) {
+                this.ui.showErrorLoadingFiles();
+            }
+        }
     }
 
     private void checkToRun() throws FileNotFoundException {
         this.shopManager.checkIfFileExists();
+    }
 
+    private boolean checkApi() {
+        try {
+            ApiHelper api = new ApiHelper();
+            return true;
+        }catch (ApiException e) {
+            return false;
+        }
     }
 
     private void startMenu() {
@@ -67,15 +72,6 @@ public class Controller {
             this.executeOption(option);
         } while(option != 6);
 
-    }
-
-    private int checkApi() {
-        try {
-            ApiHelper api = new ApiHelper();
-            return 1;
-        }catch (ApiException e) {
-            return 0;
-        }
     }
 
     private void executeOption(int option) {
