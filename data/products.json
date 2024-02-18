@@ -10,5 +10,12 @@
         "commentary": "Buen producto!!"
       }
     ]
+  },
+  {
+    "name": "La pelota",
+    "brand": "Nike",
+    "mrp": 12.32,
+    "category": "GeneralProduct",
+    "reviews": []
   }
 ]
