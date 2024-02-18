@@ -23,6 +23,14 @@
     "earnings": 0.0,
     "businessModel": "SponsoredShop",
     "sponsored_brand": "gucci",
-    "catalogue": []
+    "catalogue": [
+      {
+        "name": "La pelota",
+        "brand": "Nike",
+        "category": "GeneralProduct",
+        "mrp": 12.32,
+        "price": 12.0
+      }
+    ]
   }
 ]

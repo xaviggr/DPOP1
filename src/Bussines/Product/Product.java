@@ -51,4 +51,8 @@ public abstract class Product {
     public void removeReview(Review review) {
         this.reviews.remove(review);
     }
+
+    public double calcPrice(double price, int iva) {
+        return price/(1 + ((double) iva /100));
+    }
 }

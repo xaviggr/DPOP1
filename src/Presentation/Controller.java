@@ -96,9 +96,10 @@ public class Controller {
                 this.listShops();
                 break;
             case 5:
-                this.ui.showCart(this.shopCart);
-                choose = this.ui.showCartMenu();
-                this.shopCartInteraction(choose);
+                if (this.ui.showCart(this.shopCart)) {
+                    choose = this.ui.showCartMenu();
+                    this.shopCartInteraction(choose);
+                }
                 break;
             case 6:
                 this.exit();
@@ -418,7 +419,6 @@ public class Controller {
 
     private void checkout() {
         if (ui.askForConfirmation("Are you sure you want to checkout?")) {
-
             for (ShopProduct sp : shopCart.getProductList()) {
                 List<Shop> shops;
                 try {
