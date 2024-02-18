@@ -1,5 +1,6 @@
 package Presentation;
 
+import Bussines.DataSourceOptions;
 import Bussines.Product.Product;
 import Bussines.Product.ShopProduct;
 import Bussines.Review;
@@ -9,6 +10,8 @@ import Bussines.ShopManager;
 import Bussines.exception.BusinessException;
 import Bussines.exception.PersistenceIntegrationException;
 import Persistence.exception.PersistenceJsonException;
+import edu.salle.url.api.ApiHelper;
+import edu.salle.url.api.exception.ApiException;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -17,29 +20,43 @@ import java.util.List;
 
 public class Controller {
     private final UI ui;
-    private final ShopManager shopManager;
+    private  ShopManager shopManager;
     private final ShopCart shopCart;
 
-    public Controller(UI ui, ShopManager shopManager, ShopCart shopCart) {
+    public Controller(UI ui, ShopCart shopCart) {
         this.ui = ui;
-        this.shopManager = shopManager;
         this.shopCart = shopCart;
     }
 
     public void run() {
         this.ui.showMainLogo();
-
-        try {
-            this.checkToRun();
-            this.ui.showFileConfirmation();
-            this.startMenu();
-        } catch (FileNotFoundException e) {
-            this.ui.showErrorLoadingFiles();
+        this.ui.showMessage("Checking API status...");
+        switch (checkApi()) {
+            case 1:
+                //Api available
+                this.ui.showMessage("Starting program...\n\n");
+                this.shopManager = new ShopManager(DataSourceOptions.API);
+                this.startMenu();
+                break;
+            case 0:
+                //Api not available
+                this.ui.showMessage("Error: the API isn't available.");
+                try {
+                    this.shopManager = new ShopManager(DataSourceOptions.JSON);
+                    this.checkToRun();
+                    this.ui.showFileConfirmation();
+                    this.startMenu();
+                } catch (FileNotFoundException e) {
+                    this.ui.showErrorLoadingFiles();
+                }
+                break;
         }
+
     }
 
     private void checkToRun() throws FileNotFoundException {
         this.shopManager.checkIfFileExists();
+
     }
 
     private void startMenu() {
@@ -50,6 +67,15 @@ public class Controller {
             this.executeOption(option);
         } while(option != 6);
 
+    }
+
+    private int checkApi() {
+        try {
+            ApiHelper api = new ApiHelper();
+            return 1;
+        }catch (ApiException e) {
+            return 0;
+        }
     }
 
     private void executeOption(int option) {

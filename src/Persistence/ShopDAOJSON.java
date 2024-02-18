@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopDAO extends DAOJSON implements ShopDAOi {
+public class ShopDAOJSON extends DAOJSON implements ShopDAO {
 
-    public ShopDAO() {
+    public ShopDAOJSON() {
         this.path += "shops.json";
         try {
             checkIfFileExists();
@@ -65,7 +65,7 @@ public class ShopDAO extends DAOJSON implements ShopDAOi {
         return this.getShop(shopName).getCatalog();
     }
 
-    //FALTA EN UML
+
     @Override
     public ShopProduct getProductFromShop(String shopName, String productName) throws PersistenceJsonException {
         List<ShopProduct> products = getProductsFromShop(shopName);

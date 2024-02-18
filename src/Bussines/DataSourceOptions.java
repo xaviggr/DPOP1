@@ -1,2 +1,6 @@
-package Bussines;public enum DataSourceOptions {
+package Bussines;
+
+public enum DataSourceOptions {
+    API,
+    JSON
 }

@@ -13,8 +13,9 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDAO extends DAOJSON {
-    public ProductDAO() {
+public class ProductDAOJSON extends DAOJSON implements ProductDAO {
+
+    public ProductDAOJSON() {
         this.path = this.path + "products.json";
     }
 
@@ -63,6 +64,7 @@ public class ProductDAO extends DAOJSON {
         return product;
     }
 
+    @Override
     public void addProduct(Product product) throws PersistenceJsonException {
         JsonArray products = this.readAllFromFile();
         JsonObject newProduct = this.productToJson(product);
@@ -70,6 +72,7 @@ public class ProductDAO extends DAOJSON {
         this.saveToFile(products);
     }
 
+    @Override
     public void updateProduct(Product product) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
 
@@ -86,6 +89,7 @@ public class ProductDAO extends DAOJSON {
         }
     }
 
+    @Override
     public void removeProduct(String productName) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
 
@@ -99,6 +103,7 @@ public class ProductDAO extends DAOJSON {
         }
     }
 
+    @Override
     public Product findProduct(String productName) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
 
@@ -111,6 +116,7 @@ public class ProductDAO extends DAOJSON {
         return null;
     }
 
+    @Override
     public List<Product> findProductsByQuery(String query) throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
         List<Product> productList = new ArrayList<>();
@@ -131,6 +137,7 @@ public class ProductDAO extends DAOJSON {
         return productList;
     }
 
+    @Override
     public List<Product> getAllProducts() throws PersistenceJsonException {
         JsonArray products = readAllFromFile();
         List<Product> productList = new ArrayList<>();

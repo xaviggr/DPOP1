@@ -3,20 +3,27 @@ package Bussines;
 import Bussines.Product.*;
 import Bussines.Shop.Shop;
 import Bussines.exception.PersistenceIntegrationException;
-import Persistence.ProductDAO;
-import Persistence.ShopDAO;
+import Persistence.*;
 import Persistence.exception.PersistenceJsonException;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 
 public class ShopManager {
-    private final ShopDAO shopDAO;
-    private final ProductDAO productDAO;
+    private  ShopDAO shopDAO;
+    private  ProductDAO productDAO;
 
-    public ShopManager(ShopDAO shopDAO, ProductDAO productDAO) {
-        this.shopDAO = shopDAO;
-        this.productDAO = productDAO;
+    public ShopManager(DataSourceOptions options) {
+        switch (options) {
+            case API -> {
+                this.shopDAO = new ShopDAOApi();
+                this.productDAO = new ProductDAOApi();
+            }
+            case JSON -> {
+                this.shopDAO = new ShopDAOJSON();
+                this.productDAO = new ProductDAOJSON();
+            }
+        }
     }
 
     public void createProduct(String name, String brand, double maxPrice, String category) throws PersistenceIntegrationException {

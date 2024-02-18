@@ -6,7 +6,7 @@ import Persistence.exception.PersistenceJsonException;
 
 import java.util.List;
 
-public interface ShopDAOi {
+public interface ShopDAO {
     Shop getShop(String shopName) throws PersistenceJsonException;
     List<Shop> getShops() throws PersistenceJsonException;
     List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceJsonException;
