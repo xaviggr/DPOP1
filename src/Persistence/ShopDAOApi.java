@@ -90,6 +90,18 @@ public class ShopDAOApi implements ShopDAO {
         jsonObject.addProperty("since", shop.getFoundationYear());
         jsonObject.addProperty("earnings", shop.getEarnings());
         jsonObject.addProperty("businessModel", shop.getBusinessModel());
+        switch (shop.getBusinessModel()) {
+            case "LoyaltyShop" ->  {
+                if (shop instanceof LoyaltyShop loyaltyShop) {
+                    jsonObject.addProperty("threshold", loyaltyShop.getThreshold());
+                }
+            }
+            case "SponsoredShop" ->  {
+                if (shop instanceof SponsoredShop sponsoredShop) {
+                    jsonObject.addProperty("sponsored_brand", sponsoredShop.getBrand());
+                }
+            }
+        }
 
         JsonArray shopProducts = new JsonArray();
         for (ShopProduct shopProduct : shop.getCatalog()) {
