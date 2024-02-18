@@ -414,7 +414,7 @@ public class UI {
      *
      * @param shopCart El carrito de compras.
      */
-    public void showCart(ShopCart shopCart) {
+    public boolean showCart(ShopCart shopCart) {
         if (!shopCart.getProductList().isEmpty()) {
             System.out.println("Your cart contains the following items:");
             for (int i = 0; i < shopCart.getProductList().size(); i++) {
@@ -424,8 +424,11 @@ public class UI {
             }
 
             System.out.println("Total: " + shopCart.getTotalPrice());
-        } else {
-            System.out.println("Your cart is empty.");
+            return true;
+        }
+        else {
+            System.out.println("Your cart is empty.\n");
+            return false;
         }
     }
 }
