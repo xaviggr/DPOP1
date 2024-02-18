@@ -171,9 +171,9 @@ public class UI {
         } while (!isValid);
 
         return switch (userInput) {
-            case "A" -> "Maximum Benefits";
-            case "B" -> "Loyalty";
-            case "C" -> "Sponsored";
+            case "A" -> "MaximumProfitShop";
+            case "B" -> "LoyaltyShop";
+            case "C" -> "SponsoredShop";
             default -> "Invalid Option";
         };
 

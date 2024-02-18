@@ -208,9 +208,15 @@ public class Controller {
         int foundingYear = this.ui.askForPositiveInteger("Please enter the shop's founding year: ");
         String businessModel = this.ui.askForShopModel();
         Shop s = switch (businessModel) {
-            case "Maximum Benefits" -> new MaximumProfitShop(shopName, description, foundingYear, 0, new ArrayList<>());
-            case "Loyalty" -> new LoyaltyShop(shopName, description, foundingYear, 0, new ArrayList<>());
-            case "Sponsored" -> new SponsoredShop(shopName, description, foundingYear, 0, new ArrayList<>());
+            case "MaximumProfitShop" -> new MaximumProfitShop(shopName, description, foundingYear, 0, new ArrayList<>());
+            case "LoyaltyShop" ->  {
+                double threshold = this.ui.askForDouble("Please enter loyalty threshold: ");
+                yield new LoyaltyShop(shopName, description, foundingYear, 0, new ArrayList<>(),threshold);
+            }
+            case "SponsoredShop" ->  {
+                String brand = this.ui.askForString("Please enter the shop's sponsoring brand: ");
+                yield new  SponsoredShop(shopName, description, foundingYear, 0, new ArrayList<>(), brand);
+            }
             default -> null;
         };
 
@@ -287,12 +293,16 @@ public class Controller {
             if (this.ui.isValidIndex(choose, shopNames.size() - 1) && !shopNames.isEmpty()) {
                 Shop s = this.shopManager.getShop(shopNames.get(choose - 1));
                 List<ShopProduct> products = this.shopManager.getAllProductsFromShop(s.getName());
-                this.ui.showShopCatalogue(s, products);
-                int element = this.ui.askForInteger("Which one are you interested in? ");
-                if (this.ui.isValidIndex(element, products.size() - 1)) {
-                    ShopProduct sp = products.get(element - 1);
-                    int selected = this.ui.showCatalogMenu("Choose an option: ");
-                    this.listShopsInteraction(selected, sp);
+                if (products.isEmpty()) {
+                    this.ui.showMessage("This shop has no products\n");
+                } else {
+                    this.ui.showShopCatalogue(s, products);
+                    int element = this.ui.askForInteger("Which one are you interested in? ");
+                    if (this.ui.isValidIndex(element, products.size() - 1)) {
+                        ShopProduct sp = products.get(element - 1);
+                        int selected = this.ui.showCatalogMenu("Choose an option: ");
+                        this.listShopsInteraction(selected, sp);
+                    }
                 }
             }
 

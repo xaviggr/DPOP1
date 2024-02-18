@@ -1,42 +1,28 @@
 [
   {
     "name": "Nike",
-    "description": "Tienda de bambas",
-    "since": 1987,
-    "earnings": 0.0,
-    "businessModel": "MaximumProfitShop",
-    "catalogue": [
-      {
-        "name": "Jordan 1",
-        "brand": "Nike",
-        "category": "GeneralProduct",
-        "mrp": 90.0,
-        "price": 66.0
-      }
-    ]
-  },
-  {
-    "name": "Nike",
-    "description": "perlif",
-    "since": 1234,
-    "earnings": 0.0,
-    "businessModel": "MaximumProfitShop",
-    "catalogue": []
-  },
-  {
-    "name": "hola",
-    "description": "ghfghf",
+    "description": "la buena",
     "since": 123,
     "earnings": 0.0,
     "businessModel": "LoyaltyShop",
+    "threshold": 123.0,
     "catalogue": []
   },
   {
-    "name": "Nike",
-    "description": "sdasdas",
-    "since": 1987,
+    "name": "Adidas",
+    "description": "la segunda",
+    "since": 123,
     "earnings": 0.0,
     "businessModel": "MaximumProfitShop",
+    "catalogue": []
+  },
+  {
+    "name": "Zar",
+    "description": "213",
+    "since": 123,
+    "earnings": 0.0,
+    "businessModel": "SponsoredShop",
+    "sponsored_brand": "gucci",
     "catalogue": []
   }
 ]

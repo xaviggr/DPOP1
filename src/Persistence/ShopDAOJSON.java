@@ -125,6 +125,7 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
     @Override
     public void addShop(Shop shop) throws PersistenceJsonException {
         List<Shop> shops = this.getShops();
+        System.out.println(shops);
         shops.add(shop);
         this.saveShopsToFile(shops);
     }
@@ -156,10 +157,17 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             products.add(new ShopProduct(product, price));
         }
 
+
         return switch (businessModel) {
-            case "Maximum Benefits" -> new MaximumProfitShop(name, description, foundationYear, earnings, products);
-            case "Loyalty" -> new LoyaltyShop(name, description, foundationYear, earnings, products);
-            case "Sponsored" -> new SponsoredShop(name, description, foundationYear, earnings, products);
+            case "MaximumProfitShop" -> new MaximumProfitShop(name, description, foundationYear, earnings, products);
+            case "LoyaltyShop" ->  {
+                double threshold = shopObject.get("threshold").getAsDouble();
+                yield new LoyaltyShop(name, description, foundationYear, earnings, products,threshold);
+            }
+            case "SponsoredShop" ->  {
+                String brand = shopObject.get("sponsored_brand").getAsString();
+                yield new SponsoredShop(name, description, foundationYear, earnings, products,brand);
+            }
             default -> null;
         };
     }
@@ -174,9 +182,20 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             shopObject.addProperty("since", shop.getFoundationYear());
             shopObject.addProperty("earnings", shop.getEarnings());
             shopObject.addProperty("businessModel", shop.getBusinessModel());
+            switch (shop.getBusinessModel()) {
+                case "LoyaltyShop" ->  {
+                    if (shop instanceof LoyaltyShop loyaltyShop) {
+                        shopObject.addProperty("threshold", loyaltyShop.getThreshold());
+                    }
+                }
+                case "SponsoredShop" ->  {
+                    if (shop instanceof SponsoredShop sponsoredShop) {
+                        shopObject.addProperty("sponsored_brand", sponsoredShop.getBrand());
+                    }
+                }
+            }
 
             JsonArray shopProducts = getShopProducts(shop);
-
             shopObject.add("catalogue", shopProducts);
             jsonArray.add(shopObject);
         }
