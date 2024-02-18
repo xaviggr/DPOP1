@@ -14,5 +14,21 @@
         "price": 66.0
       }
     ]
+  },
+  {
+    "name": "Nike",
+    "description": "perlif",
+    "since": 1234,
+    "earnings": 0.0,
+    "businessModel": "Maximum Benefits",
+    "catalogue": []
+  },
+  {
+    "name": "hola",
+    "description": "ghfghf",
+    "since": 123,
+    "earnings": 0.0,
+    "businessModel": "Loyalty",
+    "catalogue": []
   }
 ]

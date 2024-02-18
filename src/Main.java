@@ -1,7 +1,8 @@
+import Bussines.DataSourceOptions;
 import Bussines.ShopCart;
 import Bussines.ShopManager;
-import Persistence.ProductDAO;
-import Persistence.ShopDAO;
+import Persistence.ProductDAOJSON;
+import Persistence.ShopDAOJSON;
 import Presentation.Controller;
 import Presentation.UI;
 import edu.salle.url.api.ApiHelper;
@@ -19,17 +20,12 @@ public class Main {
      */
     public static void main(String[] args) throws ApiException {
         // Initialization of essential components
-        ProductDAO productDAO = new ProductDAO();
-        ShopDAO shopDAO = new ShopDAO();
-        ShopManager shopManager = new ShopManager(shopDAO, productDAO);
+
         UI ui = new UI();
         ShopCart shopCart = new ShopCart();
 
-        // Initialization of the API helper
-        //ApiHelper apiHelper = new ApiHelper();
-
         // Creation and configuration of the controller
-        Controller controller = new Controller(ui, shopManager, shopCart);
+        Controller controller = new Controller(ui, shopCart);
         // Execution of the controller to initiate the application
         controller.run();
     }
