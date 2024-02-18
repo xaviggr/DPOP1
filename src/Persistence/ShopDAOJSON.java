@@ -29,106 +29,6 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             }
         }
     }
-
-    @Override
-    public Shop getShop(String shopName) throws PersistenceJsonException {
-        List<Shop> shopsList = this.getShops();
-        return this.findShopByName(shopsList, shopName);
-    }
-
-    @Override
-    public List<Shop> getShops() throws PersistenceJsonException {
-        JsonArray shops = readAllFromFile();
-        List<Shop> shopsList = new ArrayList<>();
-
-        for (JsonElement shopElement : shops) {
-            JsonObject shopObject = shopElement.getAsJsonObject();
-            shopsList.add(createShopFromJsonObject(shopObject));
-        }
-
-        return shopsList;
-    }
-
-    @Override
-    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceJsonException {
-        List<Shop> shops = getShops();
-        List<Shop> shopsWithProduct = new ArrayList<>();
-
-        for (Shop shop : shops) {
-            if (shop.productExists(productName)) {
-                shopsWithProduct.add(shop);
-            }
-        }
-
-        return shopsWithProduct;
-    }
-
-    @Override
-    public List<ShopProduct> getProductsFromShop(String shopName) throws PersistenceJsonException {
-        return this.getShop(shopName).getCatalog();
-    }
-
-
-    @Override
-    public ShopProduct getProductFromShop(String shopName, String productName) throws PersistenceJsonException {
-        List<ShopProduct> products = getProductsFromShop(shopName);
-
-        for (ShopProduct currentProduct: products) {
-            if (currentProduct.getProductName().equals(productName)) {
-                return currentProduct;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void addProductInShop(String shopName, ShopProduct shopProduct) throws PersistenceJsonException {
-        List<Shop> shops = this.getShops();
-        Shop shop = this.findShopByName(shops, shopName);
-        if (shop != null) {
-            shop.addProduct(shopProduct);
-            this.saveShopsToFile(shops);
-        }
-
-    }
-
-    @Override
-    public void updateProductFromShop(String shopName, ShopProduct shopProduct) throws PersistenceJsonException {
-        List<Shop> shops = this.getShops();
-        Shop shop = this.findShopByName(shops, shopName);
-        if (shop != null && shop.updateProduct(shopProduct)) {
-            this.saveShopsToFile(shops);
-        }
-
-    }
-
-    @Override
-    public void removeProductFromShop(String shopName, String shopProductName) throws PersistenceJsonException {
-        List<Shop> shops = this.getShops();
-        Shop shop = this.findShopByName(shops, shopName);
-        if (shop != null && shop.removeProduct(shopProductName)) {
-            this.saveShopsToFile(shops);
-        }
-
-    }
-
-    @Override
-    public Shop findShopByName(List<Shop> shops, String shopName) {
-        for (Shop currentShop : shops) {
-            if (currentShop.getName().equals(shopName)) {
-                return currentShop;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void addShop(Shop shop) throws PersistenceJsonException {
-        List<Shop> shops = this.getShops();
-        shops.add(shop);
-        this.saveShopsToFile(shops);
-    }
-
     private Shop createShopFromJsonObject(JsonObject shopObject) {
         String name = shopObject.get("name").getAsString();
         String description = shopObject.get("description").getAsString();
@@ -170,7 +70,6 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             default -> null;
         };
     }
-
     private void saveShopsToFile(List<Shop> shops) throws PersistenceJsonException {
         JsonArray jsonArray = new JsonArray();
 
@@ -200,7 +99,6 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
         }
         saveToFile(jsonArray);
     }
-
     private JsonArray getShopProducts(Shop shop) {
         JsonArray shopProducts = new JsonArray();
 
@@ -215,7 +113,93 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
         }
         return shopProducts;
     }
+    private Shop findShopByName(List<Shop> shops, String shopName) {
+        for (Shop currentShop : shops) {
+            if (currentShop.getName().equals(shopName)) {
+                return currentShop;
+            }
+        }
+        return null;
+    }
+    @Override
+    public Shop getShop(String shopName) throws PersistenceJsonException {
+        List<Shop> shopsList = this.getShops();
+        return this.findShopByName(shopsList, shopName);
+    }
+    @Override
+    public List<Shop> getShops() throws PersistenceJsonException {
+        JsonArray shops = readAllFromFile();
+        List<Shop> shopsList = new ArrayList<>();
 
+        for (JsonElement shopElement : shops) {
+            JsonObject shopObject = shopElement.getAsJsonObject();
+            shopsList.add(createShopFromJsonObject(shopObject));
+        }
+
+        return shopsList;
+    }
+    @Override
+    public List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceJsonException {
+        List<Shop> shops = getShops();
+        List<Shop> shopsWithProduct = new ArrayList<>();
+
+        for (Shop shop : shops) {
+            if (shop.productExists(productName)) {
+                shopsWithProduct.add(shop);
+            }
+        }
+
+        return shopsWithProduct;
+    }
+    @Override
+    public List<ShopProduct> getProductsFromShop(String shopName) throws PersistenceJsonException {
+        return this.getShop(shopName).getCatalog();
+    }
+    @Override
+    public ShopProduct getProductFromShop(String shopName, String productName) throws PersistenceJsonException {
+        List<ShopProduct> products = getProductsFromShop(shopName);
+
+        for (ShopProduct currentProduct: products) {
+            if (currentProduct.getProductName().equals(productName)) {
+                return currentProduct;
+            }
+        }
+        return null;
+    }
+    @Override
+    public void addProductInShop(String shopName, ShopProduct shopProduct) throws PersistenceJsonException {
+        List<Shop> shops = this.getShops();
+        Shop shop = this.findShopByName(shops, shopName);
+        if (shop != null) {
+            shop.addProduct(shopProduct);
+            this.saveShopsToFile(shops);
+        }
+
+    }
+    @Override
+    public void updateProductFromShop(String shopName, ShopProduct shopProduct) throws PersistenceJsonException {
+        List<Shop> shops = this.getShops();
+        Shop shop = this.findShopByName(shops, shopName);
+        if (shop != null && shop.updateProduct(shopProduct)) {
+            this.saveShopsToFile(shops);
+        }
+
+    }
+    @Override
+    public void removeProductFromShop(String shopName, String shopProductName) throws PersistenceJsonException {
+        List<Shop> shops = this.getShops();
+        Shop shop = this.findShopByName(shops, shopName);
+        if (shop != null && shop.removeProduct(shopProductName)) {
+            this.saveShopsToFile(shops);
+        }
+
+    }
+    @Override
+    public void addShop(Shop shop) throws PersistenceJsonException {
+        List<Shop> shops = this.getShops();
+        shops.add(shop);
+        this.saveShopsToFile(shops);
+    }
     @Override
     public void removeProductFromShops(String nameProduct) throws PersistenceJsonException {
         List<Shop> shops = getShops();
@@ -224,7 +208,6 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
         }
         saveShopsToFile(shops);
     }
-
     @Override
     public List<String> getAllNameShops() throws PersistenceJsonException {
         List<Shop> shops = getShops();
@@ -234,7 +217,6 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
         }
         return names;
     }
-
     @Override
     public List<String> getAllProductsNameFromShop(String shopName) throws PersistenceJsonException {
         List<ShopProduct> products = getProductsFromShop(shopName);
@@ -244,7 +226,6 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
         }
         return names;
     }
-
     @Override
     public void updateShop(Shop shop) throws PersistenceJsonException {
         List<Shop> shops = getShops();

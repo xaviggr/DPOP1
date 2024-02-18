@@ -59,8 +59,14 @@ public class ShopDAOApi implements ShopDAO {
 
         return switch (businessModel) {
             case "MaximumProfitShop" -> new MaximumProfitShop(name, description, foundationYear, earnings, products);
-            case "LoyaltyShop" -> new LoyaltyShop(name, description, foundationYear, earnings, products);
-            case "SponsoredShop" -> new SponsoredShop(name, description, foundationYear, earnings, products);
+            case "LoyaltyShop" -> {
+                double threshold = jsonObject.get("threshold").getAsDouble();
+                yield new LoyaltyShop(name, description, foundationYear, earnings, products, threshold);
+            }
+            case "SponsoredShop" -> {
+                String brand = jsonObject.get("sponsored_brand").getAsString();
+                yield new SponsoredShop(name, description, foundationYear, earnings, products, brand);
+            }
             default -> null;
         };
     }
