@@ -54,7 +54,7 @@ public class ShopManager {
     public void createShop(Shop shop) throws PersistenceIntegrationException {
         try {
             this.shopDAO.addShop(shop);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -62,7 +62,7 @@ public class ShopManager {
     public void expandCatalog(String shopName, ShopProduct sp) throws PersistenceIntegrationException {
         try {
             this.shopDAO.addProductInShop(shopName, sp);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -70,7 +70,7 @@ public class ShopManager {
     public void reduceCatalog(String shopName, String productName) throws PersistenceIntegrationException {
         try {
             this.shopDAO.removeProductFromShop(shopName, productName);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -129,7 +129,7 @@ public class ShopManager {
     public List<ShopProduct> getAllProductsFromShop(String shopName) throws PersistenceIntegrationException {
         try {
             return this.shopDAO.getProductsFromShop(shopName);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -137,17 +137,15 @@ public class ShopManager {
     public List<Shop> getAllShops() throws PersistenceIntegrationException {
         try {
             return this.shopDAO.getShops();
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
 
     public Shop findShopByName(String shopName) throws PersistenceIntegrationException {
         try {
-            List<Shop> list;
-            list = this.shopDAO.getShops();
-            return this.shopDAO.findShopByName(list, shopName);
-        } catch (PersistenceJsonException e) {
+            return this.shopDAO.getShop(shopName);
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -155,7 +153,7 @@ public class ShopManager {
     public List<Shop> getShopsWhereProductExistsInCatalog(String productName) throws PersistenceIntegrationException {
         try {
             return this.shopDAO.getShopsWhereProductExistsInCatalog(productName);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -163,7 +161,7 @@ public class ShopManager {
     public ShopProduct getProductFromShop(String shopName, String productName) throws PersistenceIntegrationException {
         try {
             return this.shopDAO.getProductFromShop(shopName, productName);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -171,7 +169,7 @@ public class ShopManager {
     public List<String> getAllNameShops() throws PersistenceIntegrationException {
         try {
             return this.shopDAO.getAllNameShops();
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -179,7 +177,7 @@ public class ShopManager {
     public Shop getShop(String shopName) throws PersistenceIntegrationException {
         try {
             return this.shopDAO.getShop(shopName);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -187,7 +185,7 @@ public class ShopManager {
     public List<String> getAllProductsNameFromShop(String shopName) throws PersistenceIntegrationException {
         try {
             return this.shopDAO.getAllProductsNameFromShop(shopName);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
@@ -195,7 +193,7 @@ public class ShopManager {
     public void checkout(Shop s) throws PersistenceIntegrationException {
         try {
             this.shopDAO.updateShop(s);
-        } catch (PersistenceJsonException e) {
+        } catch (PersistenceJsonException | ApiException e) {
             throw new PersistenceIntegrationException("",e);
         }
     }
