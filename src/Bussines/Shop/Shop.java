@@ -4,19 +4,17 @@ import Bussines.Product.ShopProduct;
 
 import java.util.List;
 
-public class Shop {
+public abstract class Shop {
     private String name;
     private String description;
     private int foundationYear;
-    private String businessModel;
     private double earnings;
     private List<ShopProduct> catalog;
 
-    public Shop(String name, String description, int foundationYear, double earnings, String businessModel, List<ShopProduct> catalog) {
+    public Shop(String name, String description, int foundationYear, double earnings, List<ShopProduct> catalog) {
         this.name = name;
         this.description = description;
         this.foundationYear = foundationYear;
-        this.businessModel = businessModel;
         this.earnings = earnings;
         this.catalog = catalog;
     }
@@ -34,7 +32,7 @@ public class Shop {
     }
 
     public String getBusinessModel() {
-        return this.businessModel;
+        return this.getClass().getSimpleName();
     }
 
     public double getEarnings() {

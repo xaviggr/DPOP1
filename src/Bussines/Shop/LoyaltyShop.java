@@ -6,8 +6,8 @@ import java.util.List;
 
 public class LoyaltyShop extends Shop {
 
-    public LoyaltyShop(String name, String description, int foundationYear, double earnings, String bussinesModel,  List<ShopProduct> catalog) {
-        super(name, description, foundationYear, earnings, bussinesModel, catalog);
+    public LoyaltyShop(String name, String description, int foundationYear, double earnings,  List<ShopProduct> catalog) {
+        super(name, description, foundationYear, earnings, catalog);
     }
 
 }

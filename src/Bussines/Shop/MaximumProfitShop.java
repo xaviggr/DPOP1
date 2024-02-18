@@ -6,7 +6,7 @@ import java.util.List;
 
 public class MaximumProfitShop extends Shop {
 
-    public MaximumProfitShop(String name, String description, int foundationYear, double earnings, String businessModel, List<ShopProduct> catalog) {
-        super(name, description, foundationYear, earnings, businessModel, catalog);
+    public MaximumProfitShop(String name, String description, int foundationYear, double earnings, List<ShopProduct> catalog) {
+        super(name, description, foundationYear, earnings, catalog);
     }
 }

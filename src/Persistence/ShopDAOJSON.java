@@ -1,7 +1,10 @@
 package Persistence;
 
 import Bussines.Product.*;
+import Bussines.Shop.LoyaltyShop;
+import Bussines.Shop.MaximumProfitShop;
 import Bussines.Shop.Shop;
+import Bussines.Shop.SponsoredShop;
 import Persistence.exception.PersistenceJsonException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -153,7 +156,12 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             products.add(new ShopProduct(product, price));
         }
 
-        return new Shop(name, description, foundationYear, earnings, businessModel, products);
+        return switch (businessModel) {
+            case "Maximum Benefits" -> new MaximumProfitShop(name, description, foundationYear, earnings, products);
+            case "Loyalty" -> new LoyaltyShop(name, description, foundationYear, earnings, products);
+            case "Sponsored" -> new SponsoredShop(name, description, foundationYear, earnings, products);
+            default -> null;
+        };
     }
 
     private void saveShopsToFile(List<Shop> shops) throws PersistenceJsonException {

@@ -4,12 +4,12 @@
     "description": "Tienda de bambas",
     "since": 1987,
     "earnings": 0.0,
-    "businessModel": "Maximum Benefits",
+    "businessModel": "MaximumProfitShop",
     "catalogue": [
       {
         "name": "Jordan 1",
         "brand": "Nike",
-        "category": "ShopProduct",
+        "category": "GeneralProduct",
         "mrp": 90.0,
         "price": 66.0
       }
@@ -20,7 +20,7 @@
     "description": "perlif",
     "since": 1234,
     "earnings": 0.0,
-    "businessModel": "Maximum Benefits",
+    "businessModel": "MaximumProfitShop",
     "catalogue": []
   },
   {
@@ -28,7 +28,15 @@
     "description": "ghfghf",
     "since": 123,
     "earnings": 0.0,
-    "businessModel": "Loyalty",
+    "businessModel": "LoyaltyShop",
+    "catalogue": []
+  },
+  {
+    "name": "Nike",
+    "description": "sdasdas",
+    "since": 1987,
+    "earnings": 0.0,
+    "businessModel": "MaximumProfitShop",
     "catalogue": []
   }
 ]

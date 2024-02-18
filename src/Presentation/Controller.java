@@ -4,7 +4,10 @@ import Bussines.DataSourceOptions;
 import Bussines.Product.Product;
 import Bussines.Product.ShopProduct;
 import Bussines.Review;
+import Bussines.Shop.LoyaltyShop;
+import Bussines.Shop.MaximumProfitShop;
 import Bussines.Shop.Shop;
+import Bussines.Shop.SponsoredShop;
 import Bussines.ShopCart;
 import Bussines.ShopManager;
 import Bussines.exception.BusinessException;
@@ -204,7 +207,12 @@ public class Controller {
         String description = this.ui.askForString("Please enter the shop's description: ");
         int foundingYear = this.ui.askForPositiveInteger("Please enter the shop's founding year: ");
         String businessModel = this.ui.askForShopModel();
-        Shop s = new Shop(shopName, description, foundingYear, 0.0, businessModel, new ArrayList<>());
+        Shop s = switch (businessModel) {
+            case "Maximum Benefits" -> new MaximumProfitShop(shopName, description, foundingYear, 0, new ArrayList<>());
+            case "Loyalty" -> new LoyaltyShop(shopName, description, foundingYear, 0, new ArrayList<>());
+            case "Sponsored" -> new SponsoredShop(shopName, description, foundingYear, 0, new ArrayList<>());
+            default -> null;
+        };
 
         try {
             this.shopManager.createShop(s);
