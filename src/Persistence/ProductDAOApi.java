@@ -16,10 +16,18 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La clase ProductDAOApi implementa la interfaz ProductDAO y proporciona una implementación
+ * específica para interactuar con una API para operaciones relacionadas con productos.
+ */
+@SuppressWarnings("SpellCheckingInspection")
 public class ProductDAOApi implements ProductDAO {
 
     private static final String http = "https://balandrau.salle.url.edu/dpoo/P1-G160/products";
     private final ApiHelper apiHelper;
+    /**
+     * Constructor de ProductDAOAPI que inicializa el ApiHelper para interactuar con la API.
+     */
     public ProductDAOApi() {
         try {
             apiHelper = new ApiHelper();
@@ -27,7 +35,12 @@ public class ProductDAOApi implements ProductDAO {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Método privado para convertir un objeto Product a formato JSON.
+     *
+     * @param product Producto que se va a convertir a JSON.
+     * @return Representación en formato JSON del producto.
+     */
     private String productToJson(Product product) {
         StringBuilder json = new StringBuilder("{");
 
@@ -51,7 +64,12 @@ public class ProductDAOApi implements ProductDAO {
         json.append("]}");
         return json.toString();
     }
-
+    /**
+     * Método privado para convertir una respuesta JSON a un objeto Product.
+     *
+     * @param jsonResponse Respuesta JSON que se va a convertir a un objeto Product.
+     * @return Objeto Product obtenido de la respuesta JSON.
+     */
     private Product jsonToProduct(String jsonResponse) {
         Product product;
         Gson gson = new Gson();
@@ -81,7 +99,12 @@ public class ProductDAOApi implements ProductDAO {
 
         return product;
     }
-
+    /**
+     * Método privado para convertir una respuesta JSON a una lista de objetos Product.
+     *
+     * @param jsonResponse Respuesta JSON que se va a convertir a una lista de objetos Product.
+     * @return Lista de objetos Product obtenidos de la respuesta JSON.
+     */
     private List<Product> jsonToProducts(String jsonResponse) {
         List<Product> products = new ArrayList<>();
         Gson gson = new Gson();

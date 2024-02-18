@@ -13,13 +13,23 @@ import com.google.gson.JsonObject;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Clase que implementa la interfaz ProductDAO y extiende la clase DAOJSON.
+ * Proporciona métodos para realizar operaciones de acceso a datos utilizando archivos JSON.
+ */
 public class ProductDAOJSON extends DAOJSON implements ProductDAO {
-
+    /**
+     * Constructor de ProductDAOJSON que inicializa la ruta del archivo JSON.
+     */
     public ProductDAOJSON() {
         this.path = this.path + "products.json";
     }
-
+    /**
+     * Método privado para convertir un objeto Product a formato JSON.
+     *
+     * @param product Producto que se va a convertir a JSON.
+     * @return Objeto JSON representando el producto.
+     */
     private JsonObject productToJson(Product product) {
         JsonObject productJson = new JsonObject();
         productJson.addProperty("name", product.getProductName());
@@ -29,7 +39,12 @@ public class ProductDAOJSON extends DAOJSON implements ProductDAO {
         productJson.add("reviews", this.reviewsToJsonArray(product.getReviews()));
         return productJson;
     }
-
+    /**
+     * Método privado para convertir una lista de objetos Review a formato JSON.
+     *
+     * @param reviews Lista de reviews que se va a convertir a JSON.
+     * @return Objeto JSON representando las reviews.
+     */
     private JsonArray reviewsToJsonArray(List<Review> reviews) {
         JsonArray reviewsArray = new JsonArray();
         for (Review review : reviews) {
@@ -40,7 +55,12 @@ public class ProductDAOJSON extends DAOJSON implements ProductDAO {
         }
         return reviewsArray;
     }
-
+    /**
+     * Método privado para convertir un objeto JSON a un objeto Product.
+     *
+     * @param productObject Objeto JSON que se va a convertir a Product.
+     * @return Objeto Product obtenido del JSON.
+     */
     private Product jsonToProduct(JsonObject productObject) {
         String name = productObject.get("name").getAsString();
         String brand = productObject.get("brand").getAsString();

@@ -14,11 +14,17 @@ import edu.salle.url.api.exception.ApiException;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Implementación de la interfaz ShopDAO que utiliza una API para acceder a los datos de las tiendas.
+ */
+@SuppressWarnings("SpellCheckingInspection")
 public class ShopDAOApi implements ShopDAO {
 
     private static final String http = "https://balandrau.salle.url.edu/dpoo/P1-G160/shops";
     private final ApiHelper apiHelper;
+    /**
+     * Constructor que inicializa la instancia de ApiHelper.
+     */
     public ShopDAOApi() {
         try {
             apiHelper = new ApiHelper();
@@ -26,6 +32,12 @@ public class ShopDAOApi implements ShopDAO {
             throw new RuntimeException(e);
         }
     }
+    /**
+     * Convierte la respuesta JSON de la API en un objeto Shop.
+     *
+     * @param jsonResponse Respuesta JSON de la API.
+     * @return Objeto Shop correspondiente a la respuesta JSON.
+     */
     private Shop jsonToShop(String jsonResponse) {
         Gson gson = new Gson();
         JsonElement jsonElement = gson.fromJson(jsonResponse, JsonElement.class);
@@ -70,6 +82,12 @@ public class ShopDAOApi implements ShopDAO {
             default -> null;
         };
     }
+    /**
+     * Convierte la respuesta JSON de la API en una lista de objetos Shop.
+     *
+     * @param jsonResponse Respuesta JSON de la API.
+     * @return Lista de objetos Shop correspondientes a la respuesta JSON.
+     */
     private List<Shop> jsonToShops(String jsonResponse) {
         List<Shop> shops = new ArrayList<>();
         Gson gson = new Gson();
@@ -83,6 +101,12 @@ public class ShopDAOApi implements ShopDAO {
 
         return shops;
     }
+    /**
+     * Convierte un objeto Shop en una cadena JSON para enviar a la API.
+     *
+     * @param shop Objeto Shop que se va a convertir en JSON.
+     * @return Cadena JSON correspondiente al objeto Shop.
+     */
     private String shopToJson(Shop shop) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", shop.getName());

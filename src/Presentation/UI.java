@@ -32,7 +32,6 @@ public class UI {
     public UI() {
         scanner = new Scanner(System.in);
     }
-
     //ASK METHODS
     /**
      * Solicita al usuario un número entero.
@@ -53,7 +52,6 @@ public class UI {
             }
         }
     }
-
     /**
      * Solicita al usuario un número entero positivo.
      *
@@ -78,7 +76,6 @@ public class UI {
             }
         }
     }
-
     /**
      * Solicita al usuario una cadena de texto.
      *
@@ -178,7 +175,11 @@ public class UI {
         };
 
     }
-
+    /**
+     * Solicita al usuario que elija una categoría para un producto.
+     *
+     * @return La categoría seleccionada por el usuario (GeneralProduct, ReducedTaxesProduct o SuperReducedTaxes).
+     */
     public String askForProductCategory() {
         String userInput;
 
@@ -212,7 +213,6 @@ public class UI {
     public boolean isValidIndex(int index, int size) {
         return index >= 1 && index <= size + 1;
     }
-
     //GENERAL METHODS
     /**
      * Muestra una lista de elementos.
@@ -243,7 +243,6 @@ public class UI {
         }
         return -1;
     }
-
     //SHOW MENUS
     /**
      * Muestra el menú principal.
@@ -284,7 +283,6 @@ public class UI {
         );
         return showListAndGetChoice(productMenuOptions, "Choose an option: ");
     }
-
     //SHOW MESSAGES / DATA
     /**
      * Muestra el logotipo principal.
@@ -317,7 +315,6 @@ public class UI {
     public void showMessage(String message) {
         System.out.println(message);
     }
-
     //SHOW DATA
     /**
      * Muestra información detallada sobre los productos buscados.

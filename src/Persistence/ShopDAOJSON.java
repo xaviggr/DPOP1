@@ -14,9 +14,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Implementación de la interfaz ShopDAO que utiliza un archivo JSON para almacenar y acceder a los datos de las tiendas.
+ */
+@SuppressWarnings("SpellCheckingInspection")
 public class ShopDAOJSON extends DAOJSON implements ShopDAO {
-
+    /**
+     * Constructor que inicializa el path del archivo JSON y verifica si existe o lo crea si no.
+     */
     public ShopDAOJSON() {
         this.path += "shops.json";
         try {
@@ -29,6 +34,12 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             }
         }
     }
+    /**
+     * Crea un objeto Shop a partir de un JsonObject.
+     *
+     * @param shopObject JsonObject que representa la tienda.
+     * @return Objeto Shop creado a partir del JsonObject.
+     */
     private Shop createShopFromJsonObject(JsonObject shopObject) {
         String name = shopObject.get("name").getAsString();
         String description = shopObject.get("description").getAsString();
@@ -70,6 +81,12 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             default -> null;
         };
     }
+    /**
+     * Guarda la lista de tiendas en el archivo JSON.
+     *
+     * @param shops Lista de tiendas.
+     * @throws PersistenceJsonException Si hay un error al escribir en el archivo JSON.
+     */
     private void saveShopsToFile(List<Shop> shops) throws PersistenceJsonException {
         JsonArray jsonArray = new JsonArray();
 
@@ -99,6 +116,12 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
         }
         saveToFile(jsonArray);
     }
+    /**
+     * Obtiene un JsonArray de productos de tienda a partir de una tienda.
+     *
+     * @param shop Tienda de la cual obtener los productos.
+     * @return JsonArray de productos de tienda.
+     */
     private JsonArray getShopProducts(Shop shop) {
         JsonArray shopProducts = new JsonArray();
 
@@ -113,6 +136,13 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
         }
         return shopProducts;
     }
+    /**
+     * Encuentra una tienda por nombre en la lista de tiendas.
+     *
+     * @param shops     Lista de tiendas.
+     * @param shopName  Nombre de la tienda a buscar.
+     * @return          Tienda encontrada o null si no se encuentra.
+     */
     private Shop findShopByName(List<Shop> shops, String shopName) {
         for (Shop currentShop : shops) {
             if (currentShop.getName().equals(shopName)) {
