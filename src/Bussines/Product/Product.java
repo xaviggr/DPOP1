@@ -16,6 +16,10 @@ public abstract class Product {
         this.maxPrice = maxPrice;
     }
 
+    public String getCategory() {
+        return this.getClass().getSimpleName();
+    }
+
     public String getProductName() {
         return this.name;
     }

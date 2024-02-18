@@ -182,7 +182,7 @@ public class ShopDAOJSON extends DAOJSON implements ShopDAO {
             JsonObject productObject = new JsonObject();
             productObject.addProperty("name", shopProduct.getProductName());
             productObject.addProperty("brand", shopProduct.getBrand());
-            productObject.addProperty("category", shopProduct.getClass().getSimpleName());
+            productObject.addProperty("category", shopProduct.getProduct().getCategory());
             productObject.addProperty("mrp", shopProduct.getMaxPrice());
             productObject.addProperty("price", shopProduct.getProductPrice());
             shopProducts.add(productObject);

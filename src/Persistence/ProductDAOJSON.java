@@ -10,6 +10,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ProductDAOJSON extends DAOJSON implements ProductDAO {
         productJson.addProperty("name", product.getProductName());
         productJson.addProperty("brand", product.getBrand());
         productJson.addProperty("mrp", product.getMaxPrice());
-        productJson.addProperty("category", product.getClass().getSimpleName());
+        productJson.addProperty("category", product.getCategory());
         productJson.add("reviews", this.reviewsToJsonArray(product.getReviews()));
         return productJson;
     }
@@ -81,7 +82,7 @@ public class ProductDAOJSON extends DAOJSON implements ProductDAO {
             if (productObject.get("name").getAsString().equals(product.getProductName())) {
                 productObject.addProperty("brand", product.getBrand());
                 productObject.addProperty("mrp", product.getMaxPrice());
-                productObject.addProperty("category", product.getClass().getSimpleName());
+                productObject.addProperty("category", product.getCategory());
                 productObject.add("reviews", reviewsToJsonArray(product.getReviews()));
                 saveToFile(products);
                 return;
@@ -135,6 +136,11 @@ public class ProductDAOJSON extends DAOJSON implements ProductDAO {
         }
 
         return productList;
+    }
+
+    @Override
+    public void checkIfFileExists() throws FileNotFoundException {
+        super.checkIfFileExists();
     }
 
     @Override
