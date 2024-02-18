@@ -21,16 +21,32 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * La clase Controller representa el controlador principal de la aplicación.
+ * Es responsable de coordinar la interacción entre la interfaz de usuario (UI),
+ * el gestor de tiendas (ShopManager) y el carrito de compras (ShopCart).
+ */
+@SuppressWarnings("SpellCheckingInspection")
 public class Controller {
     private final UI ui;
     private  ShopManager shopManager;
     private final ShopCart shopCart;
 
+    /**
+     * Constructor de la clase Controller.
+     *
+     * @param ui Interfaz de usuario utilizada por el controlador.
+     * @param shopCart Carrito de compras utilizado por el controlador.
+     */
     public Controller(UI ui, ShopCart shopCart) {
         this.ui = ui;
         this.shopCart = shopCart;
     }
 
+    /**
+     * Inicia la ejecución del programa, mostrando el logo principal y verificando el estado de la API.
+     * Si la API está disponible, inicia el programa; de lo contrario, intenta cargar desde JSON.
+     */
     public void run() {
         this.ui.showMainLogo();
         this.ui.showMessage("Checking API status...");
@@ -53,11 +69,19 @@ public class Controller {
             }
         }
     }
-
+    /**
+     * Verifica si un archivo necesario para la ejecución existe.
+     *
+     * @throws FileNotFoundException Si el archivo no se encuentra.
+     */
     private void checkToRun() throws FileNotFoundException {
         this.shopManager.checkIfFileExists();
     }
-
+    /**
+     * Verifica la disponibilidad de la API mediante la creación de una instancia de ApiHelper.
+     *
+     * @return true si la API está disponible, false si hay una ApiException.
+     */
     private boolean checkApi() {
         try {
             ApiHelper api = new ApiHelper();
@@ -66,7 +90,10 @@ public class Controller {
             return false;
         }
     }
-
+    /**
+     * Muestra el menú principal y ejecuta las opciones seleccionadas por el usuario
+     * hasta que se elija salir (opción 6).
+     */
     private void startMenu() {
         int option;
         do {
@@ -76,7 +103,11 @@ public class Controller {
         } while(option != 6);
 
     }
-
+    /**
+     * Ejecuta la opción seleccionada por el usuario en el menú principal.
+     *
+     * @param option Opción seleccionada por el usuario.
+     */
     private void executeOption(int option) {
         this.ui.showMessage("");
         int choose;
@@ -108,7 +139,11 @@ public class Controller {
         }
 
     }
-
+    /**
+     * Interacción con el menú de tiendas, realizando acciones según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario en el menú de tiendas.
+     */
     private void shopInteraction(int choose) {
         switch (choose) {
             case 1:
@@ -129,7 +164,12 @@ public class Controller {
         }
 
     }
-
+    /**
+     * Interacción con el menú de búsqueda de productos, realizando acciones según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario en el menú de búsqueda de productos.
+     * @param p Producto sobre el cual se realizarán las acciones.
+     */
     private void searchProductInteraction(int choose, Product p) {
         switch (choose) {
             case 1:
@@ -146,7 +186,11 @@ public class Controller {
         }
 
     }
-
+    /**
+     * Interacción con el menú de productos, realizando acciones según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario en el menú de productos.
+     */
     private void productInteraction(int choose) {
         switch (choose) {
             case 1:
@@ -184,7 +228,11 @@ public class Controller {
         }
 
     }
-
+    /**
+     * Interacción con el menú del carrito de compras, realizando acciones según la opción seleccionada.
+     *
+     * @param choose Opción seleccionada por el usuario en el menú del carrito de compras.
+     */
     private void shopCartInteraction(int choose) {
         switch (choose) {
             case 1:
@@ -201,7 +249,9 @@ public class Controller {
         }
 
     }
-
+    /**
+     * Crea una nueva tienda a partir de la información proporcionada por el usuario.
+     */
     private void createShop() {
         String shopName = this.ui.askForString("Please enter the shop's name: ");
         String description = this.ui.askForString("Please enter the shop's description: ");
@@ -228,7 +278,9 @@ public class Controller {
 
         this.ui.showMessage("'" + shopName + "' is now a part of the elCofre family.\n");
     }
-
+    /**
+     * Expande el catálogo de una tienda añadiendo un nuevo producto con su precio.
+     */
     private void expandCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String productName = ui.askForString("Please enter the product's name: ");
@@ -262,7 +314,9 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Reduce el catálogo de una tienda eliminando un producto seleccionado por el usuario.
+     */
     private void reduceCatalog() {
         String shopName = this.ui.askForString("Please enter the shop's name: ");
 
@@ -285,7 +339,9 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Lista todas las tiendas disponibles y permite al usuario seleccionar una para ver su catálogo.
+     */
     private void listShops() {
         try {
             List<String> shopNames = this.shopManager.getAllNameShops();
@@ -310,7 +366,9 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Crea un nuevo producto a partir de la información proporcionada por el usuario.
+     */
     private void createProduct() {
         String name = this.ui.askForString("Please enter the product’s name: ");
         String brand = this.ui.askForString("Please enter the product’s brand: ");
@@ -328,7 +386,9 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Elimina un producto seleccionado por el usuario del sistema.
+     */
     private void removeProduct() {
         List<Product> products;
         try {
@@ -359,7 +419,9 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Realiza una búsqueda de productos y permite al usuario seleccionar uno para interactuar con él.
+     */
     private void searchProducts() {
         String productName = this.ui.askForString("Enter your query: ");
         LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = this.getDictionaryWithProductAndShopsWhereExistsWithPrice(productName);
@@ -376,7 +438,13 @@ public class Controller {
         }
 
     }
-
+    /**
+     * Obtiene un diccionario con productos y las tiendas donde existen junto con sus precios.
+     *
+     * @param productName Nombre del producto para la búsqueda.
+     * @return Un diccionario que asigna productos a las tiendas donde existen junto con sus precios.
+     *         Devuelve null si no se encuentran productos.
+     */
     private LinkedHashMap<Product, LinkedHashMap<Shop, Double>> getDictionaryWithProductAndShopsWhereExistsWithPrice(String productName) {
         LinkedHashMap<Product, LinkedHashMap<Shop, Double>> products = new LinkedHashMap<>();
         List<Product> productsFound;
@@ -402,12 +470,18 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Agrega un producto al carrito de compras y muestra un mensaje de confirmación.
+     *
+     * @param sp Producto de tienda que se agregará al carrito.
+     */
     private void addToCart(ShopProduct sp) {
         shopCart.addProductToCart(sp);
         ui.showMessage("1x \"" + sp.getProductName() + "\" by \"" + sp.getBrand() + "\" has been added to your cart.\n");
     }
-
+    /**
+     * Limpia el contenido del carrito de compras después de confirmación del usuario.
+     */
     private void clearCart() {
         if (this.ui.askForConfirmation("Are you sure you want to clear your cart?")) {
             this.shopCart.clearCart();
@@ -415,7 +489,9 @@ public class Controller {
         }
 
     }
-
+    /**
+     * Realiza la operación de pago, procesando la compra de los productos en el carrito.
+     */
     private void checkout() {
         if (ui.askForConfirmation("Are you sure you want to checkout?")) {
 
@@ -439,7 +515,11 @@ public class Controller {
             shopCart.clearCart();
         }
     }
-
+    /**
+     * Muestra las reseñas de un producto seleccionado por el usuario.
+     *
+     * @param p Producto para el cual se mostrarán las reseñas.
+     */
     private void readReviews(Product p) {
         // List reviews from product selected.
         List<Review> reviews;
@@ -462,7 +542,11 @@ public class Controller {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Permite al usuario realizar una reseña para un producto seleccionado.
+     *
+     * @param p Producto para el cual se realizará la reseña.
+     */
     private void makeReviews(Product p) {
         // Make a review for the product selected.
         String stars = ui.askForString("Please rate the product (1-5 stars): ");
@@ -477,7 +561,9 @@ public class Controller {
 
         ui.showMessage("Thank you for your review of \"" + p.getProductName() + "\" by \"" + p.getBrand() + "\"");
     }
-
+    /**
+     * Muestra un mensaje de despedida al usuario al salir del programa.
+     */
     private void exit() {
         this.ui.showMessage("We hope to see you again!");
     }

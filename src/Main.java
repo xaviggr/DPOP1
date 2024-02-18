@@ -15,7 +15,6 @@ public class Main {
      */
     public static void main(String[] args) throws ApiException {
         // Initialization of essential components
-
         UI ui = new UI();
         ShopCart shopCart = new ShopCart();
 

@@ -14,12 +14,21 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * La clase abstracta DAOJSON proporciona métodos genéricos para interactuar con archivos JSON
+ * en el contexto de un DAO (Data Access Object). Contiene funciones para verificar la existencia
+ * de archivos, crear un nuevo archivo JSON, leer todos los datos desde un archivo y guardar datos
+ * en un archivo JSON.
+ */
+@SuppressWarnings("SpellCheckingInspection")
 public abstract class DAOJSON {
     protected String path = "data/";
 
-    public DAOJSON() {
-    }
-
+    /**
+     * Verifica si el archivo especificado existe.
+     *
+     * @throws FileNotFoundException Si el archivo no existe.
+     */
     protected void checkIfFileExists() throws FileNotFoundException {
         File file = new File(this.path);
         if (!file.exists()) {
@@ -27,6 +36,11 @@ public abstract class DAOJSON {
         }
     }
 
+    /**
+     * Crea un nuevo archivo JSON con una estructura inicial vacía.
+     *
+     * @throws PersistenceJsonException Si hay un error al intentar escribir en el archivo.
+     */
     public void createFile() throws PersistenceJsonException {
         try {
             FileWriter fileWriter = new FileWriter(this.path);
@@ -50,6 +64,12 @@ public abstract class DAOJSON {
         }
     }
 
+    /**
+     * Lee todos los datos desde el archivo JSON y retorna un objeto JsonArray.
+     *
+     * @return Un JsonArray que representa los datos leídos desde el archivo.
+     * @throws PersistenceJsonException Si hay un error al intentar leer desde el archivo.
+     */
     protected JsonArray readAllFromFile() throws PersistenceJsonException {
         try {
             FileReader fr = new FileReader(this.path);
@@ -60,6 +80,12 @@ public abstract class DAOJSON {
         }
     }
 
+    /**
+     * Guarda un objeto JsonArray en el archivo JSON.
+     *
+     * @param products Un JsonArray que representa los datos a guardar en el archivo.
+     * @throws PersistenceJsonException Si hay un error al intentar escribir en el archivo.
+     */
     protected void saveToFile(JsonArray products) throws PersistenceJsonException {
         try {
             FileWriter fileWriter = new FileWriter(this.path);

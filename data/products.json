@@ -12,9 +12,9 @@
     ]
   },
   {
-    "name": "La pelota",
-    "brand": "Nike",
-    "mrp": 12.32,
+    "name": "nike",
+    "brand": "tech",
+    "mrp": 199.0,
     "category": "GeneralProduct",
     "reviews": []
   }

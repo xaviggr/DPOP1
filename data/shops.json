@@ -24,5 +24,22 @@
     "businessModel": "SponsoredShop",
     "sponsored_brand": "gucci",
     "catalogue": []
+  },
+  {
+    "name": "pedro",
+    "description": "1823",
+    "since": 1238,
+    "earnings": 0.0,
+    "businessModel": "SponsoredShop",
+    "sponsored_brand": "hugoboss",
+    "catalogue": [
+      {
+        "name": "nike",
+        "brand": "tech",
+        "category": "GeneralProduct",
+        "mrp": 199.0,
+        "price": 1.0
+      }
+    ]
   }
 ]
