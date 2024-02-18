@@ -4,6 +4,7 @@ package Bussines.Product;
  * Clase que representa un producto general.
  */
 public class GeneralProduct extends Product {
+
     /**
      * Constructor para un producto general.
      *
@@ -13,5 +14,6 @@ public class GeneralProduct extends Product {
      */
     public GeneralProduct(String name, String brand, double maxPrice) {
         super(name, brand, maxPrice);
+        this.taxes = 0.21;
     }
 }

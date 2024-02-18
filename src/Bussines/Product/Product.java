@@ -13,6 +13,7 @@ public abstract class Product {
     private String brand;
     private Double maxPrice;
     private List<Review> reviews = new ArrayList<>();
+    protected double taxes;
 
     /**
      * Constructor para un producto.
@@ -97,5 +98,13 @@ public abstract class Product {
      */
     public void removeReview(Review review) {
         this.reviews.remove(review);
+    }
+    /**
+     * Obtiene las tasas del producto.
+     *
+     * @return Tasas del producto.
+     */
+    public double getTaxes() {
+        return taxes;
     }
 }

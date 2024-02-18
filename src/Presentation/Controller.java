@@ -284,7 +284,7 @@ public class Controller {
     private void expandCatalog() {
         String shopName = ui.askForString("Please enter the shop's name: ");
         String productName = ui.askForString("Please enter the product's name: ");
-        double price = ui.askForPositiveInteger("Please enter the product's price at this shop: ");
+        double price = ui.askForPositiveDouble("Please enter the product's price at this shop: ");
 
         Product p;
         Shop s;
@@ -501,8 +501,8 @@ public class Controller {
                     shops = shopManager.getShopsWhereProductExistsInCatalog(sp.getProductName());
                     for (Shop s : shops){
                         if (shopManager.getProductFromShop(s.getName(), sp.getProductName()).getProductPrice() == sp.getProductPrice()) {
-                            ui.showMessage("\"" + s.getName() + "\" has earned " + sp.getProductPrice() + ", for an historic total of " + s.getEarnings() + ".\n");
-                            s.setEarnings(s.getEarnings() + sp.getProductPrice());
+                            ui.showMessage("\"" + s.getName() + "\" has earned " + sp.getPriceWithTaxes() + ", for an historic total of " + s.getEarnings() + ".\n");
+                            s.setEarnings(s.getEarnings() + sp.getPriceWithTaxes());
                             shopManager.checkout(s);
                         }
                     }

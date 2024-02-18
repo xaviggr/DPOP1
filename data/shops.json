@@ -32,13 +32,42 @@
     "earnings": 0.0,
     "businessModel": "SponsoredShop",
     "sponsored_brand": "hugoboss",
+    "catalogue": []
+  },
+  {
+    "name": "Testeo",
+    "description": "adsa",
+    "since": 123123,
+    "earnings": 214.8760330578512,
+    "businessModel": "MaximumProfitShop",
     "catalogue": [
       {
-        "name": "nike",
-        "brand": "tech",
+        "name": "GTA VI",
+        "brand": "Test",
         "category": "GeneralProduct",
-        "mrp": 199.0,
-        "price": 1.0
+        "mrp": 80.0,
+        "price": 79.0
+      },
+      {
+        "name": "Xuxo de crema",
+        "brand": "tasda",
+        "category": "GeneralProduct",
+        "mrp": 10.0,
+        "price": 5.0
+      },
+      {
+        "name": "Billete",
+        "brand": "asdas",
+        "category": "GeneralProduct",
+        "mrp": 50.0,
+        "price": 2.0
+      },
+      {
+        "name": "Xuxo de crema",
+        "brand": "tasda",
+        "category": "GeneralProduct",
+        "mrp": 10.0,
+        "price": 5.5
       }
     ]
   }

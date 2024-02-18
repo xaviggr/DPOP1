@@ -6,6 +6,7 @@ package Bussines.Product;
 @SuppressWarnings("SpellCheckingInspection")
 public class ShopProduct {
     private double price;
+    private double price_with_taxes;
     private Product product;
     /**
      * Constructor para un producto en una tienda con su respectivo precio.
@@ -16,6 +17,7 @@ public class ShopProduct {
     public ShopProduct(Product product, Double price) {
         this.product = product;
         this.price = price;
+        this.price_with_taxes = (price / (1 + product.getTaxes()));
     }
     /**
      * Obtiene el nombre del producto.
@@ -80,5 +82,13 @@ public class ShopProduct {
      */
     public void setMaxPrice(double maxPrice) {
         this.product.setMaxPrice(maxPrice);
+    }
+    /**
+     * Obtiene el precio del producto con impuestos.
+     *
+     * @return Precio del producto con impuestos.
+     */
+    public double getPriceWithTaxes() {
+        return price_with_taxes;
     }
 }

@@ -1,7 +1,6 @@
 import Bussines.ShopCart;
 import Presentation.Controller;
 import Presentation.UI;
-import edu.salle.url.api.exception.ApiException;
 
 /**
  * Clase principal que inicia la aplicación.
@@ -13,7 +12,7 @@ public class Main {
      *
      * @param args Argumentos de la línea de comandos (no utilizados).
      */
-    public static void main(String[] args) throws ApiException {
+    public static void main(String[] args) {
         // Initialization of essential components
         UI ui = new UI();
         ShopCart shopCart = new ShopCart();

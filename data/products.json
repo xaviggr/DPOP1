@@ -1,20 +1,22 @@
 [
   {
-    "name": "Jordan 1",
-    "brand": "Nike",
-    "mrp": 90.0,
+    "name": "GTA VI",
+    "brand": "Test",
+    "mrp": 80.0,
     "category": "GeneralProduct",
-    "reviews": [
-      {
-        "stars": 4,
-        "commentary": "Buen producto!!"
-      }
-    ]
+    "reviews": []
   },
   {
-    "name": "nike",
-    "brand": "tech",
-    "mrp": 199.0,
+    "name": "Xuxo de crema",
+    "brand": "tasda",
+    "mrp": 10.0,
+    "category": "GeneralProduct",
+    "reviews": []
+  },
+  {
+    "name": "Billete",
+    "brand": "asdas",
+    "mrp": 50.0,
     "category": "GeneralProduct",
     "reviews": []
   }
